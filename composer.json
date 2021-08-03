@@ -1,0 +1,44 @@
+{
+    "name": "fostercommerce/entry-type-lock",
+    "description": "A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "entry type lock"
+    ],
+    "support": {
+        "docs": "https://github.com/FosterCommerce/entry-type-lock/blob/master/README.md",
+        "issues": "https://github.com/FosterCommerce/entry-type-lock/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Foster Commerce",
+            "homepage": "https://fostercommerce.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "fostercommerce\\entrytypelock\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Entry Type Lock",
+        "handle": "entry-type-lock",
+        "developer": "Foster Commerce",
+        "developerUrl": "https://fostercommerce.com",
+        "documentationUrl": "https://github.com/FosterCommerce/entry-type-lock/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-lock/master/CHANGELOG.md",
+        "components": {
+            "entryTypeLockService": "fostercommerce\\entrytypelock\\services\\EntryTypeLockService"
+        },
+        "class": "fostercommerce\\entrytypelock\\EntryTypeLock"
+    }
+}
