@@ -16,6 +16,11 @@ return [
             'blog' => [
                 'limit' => 1
             ]
+        ],
+        'blog' => [
+            'pressRelease' => [
+                'userGroups' => ['adminGroup1']
+            ]
         ]
         */
     ]
