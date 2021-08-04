@@ -84,9 +84,9 @@ class EntryTypeLockService extends Component
 
             // Check the users groups against the userGroup setting
             if (isset($setting['userGroups'])) {
-                $isInGroups = array_intersect($setting['userGroups'], $userGroupArray);
+                $matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
 
-                if(!$isInGroups) {
+                if(count($matchedGroups) == 0) {
                     array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
                 }
             }
