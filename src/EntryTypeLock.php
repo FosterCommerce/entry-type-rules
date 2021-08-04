@@ -16,10 +16,12 @@ use Craft;
 use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
-use craft\web\UrlManager;
-use craft\events\RegisterUrlRulesEvent;
-
+use craft\web\View;
 use yii\base\Event;
+
+use fostercommerce\entrytypelock\resources\EntryTypeLockBundle;
+use fostercommerce\entrytypelock\services\EntryTypeLockService;
+use fostercommerce\entrytypelock\models\Settings;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -74,6 +76,11 @@ class EntryTypeLock extends Plugin
      */
     public $hasCpSection = false;
 
+    protected function createSettingsModel()
+    {
+        return new Settings();
+    }
+
     // Public Methods
     // =========================================================================
 
@@ -93,31 +100,33 @@ class EntryTypeLock extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        // Register our site routes
+        Craft::setAlias('@plugin', $this->getBasePath());
+
+        // When CP templates are rendered, if we are in an entry form
         Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'entry-type-lock/default';
+            View::class,
+            View::EVENT_AFTER_RENDER_TEMPLATE,
+            function () {
+                if (
+                    Craft::$app->getRequest()->isCpRequest &&
+                    Craft::$app->getRequest()->getSegment(1) == 'entries' &&
+                    Craft::$app->getRequest()->getSegment(3) != ''
+                    // TODO: Add conditional to check we are not dealing with a 'Single' section
+                ) {
+                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
+                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
+                }
             }
         );
 
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'entry-type-lock/default/do-something';
-            }
-        );
-
-        // Do something after we're installed
+        // When the plugin is installed
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
                     // We were just installed
+                    // TODO: Show warnings of existing limit breaches
                 }
             }
         );

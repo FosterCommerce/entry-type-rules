@@ -46,7 +46,7 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'do-something'];
+    protected $allowAnonymous = [];
 
     // Public Methods
     // =========================================================================
@@ -59,21 +59,20 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        $result = 'Welcome to the DefaultController actionIndex() method';
+        $result = [
+            'sectionId' => 0,
+            'lockedEntryTypes' => []
+        ];
 
-        return $result;
-    }
+        // Get the section ID from a query param we will include in the ajax request
+        $sectionId = Craft::$app->request->getQueryParam('sectionId');
 
-    /**
-     * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/entry-type-lock/default/do-something
-     *
-     * @return mixed
-     */
-    public function actionDoSomething()
-    {
-        $result = 'Welcome to the DefaultController actionDoSomething() method';
-
-        return $result;
+        if ($sectionId) {
+            $result['sectionId'] = $sectionId;
+            $result['lockedEntryTypes'] = EntryTypeLock::$plugin->entryTypeLockService->getLockedEntryTypes($sectionId);
+            return json_encode($result);
+        } else {
+            return $result;
+        }
     }
 }

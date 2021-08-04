@@ -2,7 +2,7 @@
 
 A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group
 
-![Screenshot](resources/img/plugin-logo.png)
+![Screenshot](docs/img/plugin-logo.png)
 
 ## Requirements
 

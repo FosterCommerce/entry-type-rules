@@ -14,6 +14,7 @@ use fostercommerce\entrytypelock\EntryTypeLock;
 
 use Craft;
 use craft\base\Component;
+use craft\elements\Entry;
 
 /**
  * EntryTypeLockService Service
@@ -41,12 +42,38 @@ class EntryTypeLockService extends Component
      *
      *     EntryTypeLock::$plugin->entryTypeLockService->exampleService()
      *
-     * @return mixed
+     * @return array
      */
-    public function exampleService()
+    public function getLockedEntryTypes($sectionId)
     {
-        $result = 'something';
+        // We will return an array of locked entry type IDs
+        $lockedEntryTypes = [];
 
-        return $result;
+        // Get the plugins settings
+        $settings = EntryTypeLock::$plugin->getSettings();
+
+        // Get all the entry types for this section into an array
+        $sectionEntryTypes = Craft::$app->sections->getEntryTypesBySectionId($sectionId);
+        $entryTypesIdsMap = [];
+        foreach ($sectionEntryTypes as $entryType) {
+            $entryTypesIdsMap[$entryType->handle] = (int) $entryType->id;
+        }
+
+        // Get the section handle we are dealing with
+        $sectionHandle = Craft::$app->sections->getSectionById($sectionId)->handle;
+
+        // Get the settings for this section
+        $lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
+
+        // Loop through the locked entry type settings
+        foreach ($lockedTypesSettings as $typeHandle => $limit) {
+            // Get the count of each entry type and compare it to the limit value
+            $entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
+            if ($entryCount >= $limit) {
+                array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+            }
+        }
+
+        return $lockedEntryTypes;
     }
 }
