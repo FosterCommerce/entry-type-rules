@@ -66,10 +66,11 @@ class EntryTypeLockService extends Component
         $lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
 
         // Get the current user groups
-        $userGroups = Craft::$app->getUser()->getIdentity()->getGroups();
+        $user = Craft::$app->getUser();
+        $userGroups = $user->getIdentity()->getGroups();
         $userGroupArray = [];
         foreach ($userGroups as $group) {
-            $userGroupArray[] = $group->handle;
+            array_push($userGroupArray, $group->handle);
         }
 
         // Loop through the locked entry type settings
@@ -86,7 +87,7 @@ class EntryTypeLockService extends Component
             if (isset($setting['userGroups'])) {
                 $matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
 
-                if(count($matchedGroups) == 0) {
+                if(!$matchedGroups && !$user->getIsAdmin()) {
                     array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
                 }
             }
