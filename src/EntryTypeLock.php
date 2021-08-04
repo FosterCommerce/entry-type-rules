@@ -102,6 +102,17 @@ class EntryTypeLock extends Plugin
 
         Craft::setAlias('@plugin', $this->getBasePath());
 
+        // Let's put our own data regarding the section into the entry edit page in the CP
+        Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
+            $hiddenData = '';
+            $entry = $context['entry'];
+            if ($entry !== null) {
+                $hiddenData .= '<input type="hidden" id="EntryTypeLockSectionId" value="' . $entry->section->id . '" />';
+                $hiddenData .= '<input type="hidden" id="EntryTypeLockSectionType" value="' . $entry->section->type . '" />';
+            }
+            return $hiddenData;
+        });
+
         // When CP templates are rendered, if we are in an entry form
         Event::on(
             View::class,
@@ -111,7 +122,6 @@ class EntryTypeLock extends Plugin
                     Craft::$app->getRequest()->isCpRequest &&
                     Craft::$app->getRequest()->getSegment(1) == 'entries' &&
                     Craft::$app->getRequest()->getSegment(3) != ''
-                    // TODO: Add conditional to check we are not dealing with a 'Single' section
                 ) {
                     Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
                     Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
