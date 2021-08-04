@@ -74,6 +74,8 @@ class EntryTypeLockService extends Component
             }
         }
 
+        // TODO: Add checks for users user group
+
         return $lockedEntryTypes;
     }
 }
