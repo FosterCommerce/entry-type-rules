@@ -65,17 +65,33 @@ class EntryTypeLockService extends Component
         // Get the settings for this section
         $lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
 
+        // Get the current user groups
+        $userGroups = Craft::$app->getUser()->getIdentity()->getGroups();
+        $userGroupArray = [];
+        foreach ($userGroups as $group) {
+            $userGroupArray[] = $group->handle;
+        }
+
         // Loop through the locked entry type settings
-        foreach ($lockedTypesSettings as $typeHandle => $limit) {
+        foreach ($lockedTypesSettings as $typeHandle => $setting) {
             // Get the count of each entry type and compare it to the limit value
-            $entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
-            if ($entryCount >= $limit) {
-                array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+            if (isset($setting['limit'])) {
+                $entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
+                if ($entryCount >= $setting['limit']) {
+                    array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+                }
+            }
+
+            // Check the users groups against the userGroup setting
+            if (isset($setting['userGroups'])) {
+                $isInGroups = array_intersect($setting['userGroups'], $userGroupArray);
+
+                if(!$isInGroups) {
+                    array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+                }
             }
         }
 
-        // TODO: Add checks for users user group
-
-        return $lockedEntryTypes;
+        return array_unique($lockedEntryTypes);
     }
 }

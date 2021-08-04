@@ -107,11 +107,7 @@ class EntryTypeLock extends Plugin
             View::class,
             View::EVENT_AFTER_RENDER_TEMPLATE,
             function () {
-                if (Craft::$app->getRequest()->isCpRequest) {
-                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
-                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
-                }
-                /* if (
+                if (
                     Craft::$app->getRequest()->isCpRequest &&
                     Craft::$app->getRequest()->getSegment(1) == 'entries' &&
                     Craft::$app->getRequest()->getSegment(3) != ''
@@ -119,7 +115,7 @@ class EntryTypeLock extends Plugin
                 ) {
                     Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
                     Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
-                } */
+                }
             }
         );
 
