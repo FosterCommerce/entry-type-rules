@@ -14,9 +14,11 @@ use fostercommerce\entrytypelock\services\EntryTypeLockService as EntryTypeLockS
 
 use Craft;
 use craft\base\Plugin;
+use craft\base\Element;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
 use craft\web\View;
+use craft\events\DefineHtmlEvent;
 use yii\base\Event;
 
 use fostercommerce\entrytypelock\resources\EntryTypeLockBundle;
@@ -113,7 +115,7 @@ class EntryTypeLock extends Plugin
             return $hiddenData;
         });
 
-        // When CP templates are rendered, if we are in an entry form
+        // When CP templates are rendered, if we are in an entry form page
         Event::on(
             View::class,
             View::EVENT_AFTER_RENDER_TEMPLATE,
@@ -126,6 +128,17 @@ class EntryTypeLock extends Plugin
                     Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
                     Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
                 }
+            }
+        );
+
+        Event::on(
+            Element::class,
+            Element::EVENT_DEFINE_SIDEBAR_HTML,
+            function (DefineHtmlEvent $event) {
+                $sectionId = $event->sender->section->id;
+                $sectionType = $event->sender->section->type;
+                $event->html = '<h1>ID is ' . $sectionId . ' Type is ' . $sectionType . '</h1>' . $event->html;
+                Craft::$app->getView()->registerJs('console.log("Hello Sidebar");', View::POS_READY);
             }
         );
 
