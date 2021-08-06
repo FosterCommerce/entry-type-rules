@@ -14,7 +14,7 @@ use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 
-class EntryTypeLockBundle extends AssetBundle
+class EntryTypeLockEntryBundle extends AssetBundle
 {
     public function init()
     {
@@ -29,7 +29,7 @@ class EntryTypeLockBundle extends AssetBundle
         // define the relative path to CSS/JS files that should be registered with the page
         // when this asset bundle is registered
         $this->js = [
-            'js/script.js',
+            'js/EntryTypeLockEntry.js',
         ];
 
         parent::init();

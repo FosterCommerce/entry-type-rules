@@ -1,19 +1,19 @@
 (function($){
-	Craft.EntryTypeLock = Garnish.Base.extend({
+	Craft.EntryTypeLockEntry = Garnish.Base.extend({
 		// DOM elements
 		$sectionId: null,
+		$sectionType: null,
 
 		// Initialization method
 		init: function() {
 			var self = this;
 
-			self.$sectionId = $("#EntryTypeLockSectionId").val();
-			self.$sectionType = $("#EntryTypeLockSectionType").val();
+			self.$sectionId = $('[data-etl-entry-section-id]').data('value');
+			self.$sectionType = $('[data-etl-entry-section-type]').data('value');
 
-			self.refreshEntryTypes(self.$sectionId, self.$sectionType);
+			self.lockEntryTypes(self.$sectionId, self.$sectionType);
 		},
 
-		// URL param method for getting query params
 		urlParam: function (name) {
 			var self = this;
 
@@ -24,9 +24,7 @@
 			return results[1] || 0;
 		},
 
-		// Handles refreshing allowed entry types based on current
-		// entry's parent and section
-		refreshEntryTypes: function(sectionId, sectionType) {
+		lockEntryTypes: function(sectionId, sectionType) {
 			var self = this;
 
 			if (sectionId && sectionType !== 'single') {

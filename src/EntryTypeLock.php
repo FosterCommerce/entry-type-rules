@@ -21,7 +21,8 @@ use craft\web\View;
 use craft\events\DefineHtmlEvent;
 use yii\base\Event;
 
-use fostercommerce\entrytypelock\resources\EntryTypeLockBundle;
+use fostercommerce\entrytypelock\resources\EntryTypeLockEntryBundle;
+use fostercommerce\entrytypelock\resources\EntryTypeLockSlideoutBundle;
 use fostercommerce\entrytypelock\services\EntryTypeLockService;
 use fostercommerce\entrytypelock\models\Settings;
 
@@ -109,36 +110,51 @@ class EntryTypeLock extends Plugin
             $hiddenData = '';
             $entry = $context['entry'];
             if ($entry !== null) {
-                $hiddenData .= '<input type="hidden" id="EntryTypeLockSectionId" value="' . $entry->section->id . '" />';
-                $hiddenData .= '<input type="hidden" id="EntryTypeLockSectionType" value="' . $entry->section->type . '" />';
+                $hiddenData .= '<div data-etl-entry-section-id data-value="' . $entry->section->id . '"></div>';
+                $hiddenData .= '<div data-etl-entry-section-type data-value="' . $entry->section->type . '"></div>';
             }
             return $hiddenData;
         });
 
-        // When CP templates are rendered, if we are in an entry form page
+        // Watch the template rendering to see if we are in an entry edit form
         Event::on(
             View::class,
             View::EVENT_AFTER_RENDER_TEMPLATE,
             function () {
+                // Check the segments to see if we are in an entry edit form, if so register the entry bundle
                 if (
                     Craft::$app->getRequest()->isCpRequest &&
                     Craft::$app->getRequest()->getSegment(1) == 'entries' &&
                     Craft::$app->getRequest()->getSegment(3) != ''
                 ) {
-                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
-                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
+                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockEntryBundle::class, View::POS_END);
+                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLockEntry();', View::POS_READY);
                 }
             }
         );
 
+        // Watch the slide out element editor window to see if we are editing an entry in the slideout
         Event::on(
             Element::class,
             Element::EVENT_DEFINE_SIDEBAR_HTML,
             function (DefineHtmlEvent $event) {
-                $sectionId = $event->sender->section->id;
-                $sectionType = $event->sender->section->type;
-                $event->html = '<h1>ID is ' . $sectionId . ' Type is ' . $sectionType . '</h1>' . $event->html;
-                Craft::$app->getView()->registerJs('console.log("Hello Sidebar");', View::POS_READY);
+                $element = $event->sender;
+                // If the element is a Craft Entry
+                if (is_a($element, 'craft\elements\Entry')) {
+                    // Get the section ID and section type the entry belongs to
+                    $sectionId = $element->section->id;
+                    $sectionType = $element->section->type;
+                    // If it is not a single, inject out fields and register the slideout bundle
+                    if ($sectionType != 'single') {
+                        $viewNamespace = Craft::$app->getView()->namespace;
+                        $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $sectionId . '"></div>';
+                        $injectedHtml .= '<div id="entryTypeLockSectionType" data-value="' . $sectionType . '"></div>';
+                        $event->html = $injectedHtml . $event->html;
+                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockSlideoutBundle::class, View::POS_END);
+                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLockSlideout("' . $viewNamespace . '");', View::POS_READY);
+                    }
+                }
+
             }
         );
 
