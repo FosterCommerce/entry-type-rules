@@ -21,8 +21,7 @@ use craft\web\View;
 use craft\events\DefineHtmlEvent;
 use yii\base\Event;
 
-use fostercommerce\entrytypelock\resources\EntryTypeLockEntryBundle;
-use fostercommerce\entrytypelock\resources\EntryTypeLockSlideoutBundle;
+use fostercommerce\entrytypelock\resources\EntryTypeLockBundle;
 use fostercommerce\entrytypelock\services\EntryTypeLockService;
 use fostercommerce\entrytypelock\models\Settings;
 
@@ -107,13 +106,13 @@ class EntryTypeLock extends Plugin
 
         // Let's put our own data regarding the section into the entry edit page in the CP
         Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
-            $hiddenData = '';
+            $injectedHtml = '';
             $entry = $context['entry'];
-            if ($entry !== null) {
-                $hiddenData .= '<div data-etl-entry-section-id data-value="' . $entry->section->id . '"></div>';
-                $hiddenData .= '<div data-etl-entry-section-type data-value="' . $entry->section->type . '"></div>';
+            if ($entry != null && $entry->section->type != 'single') {
+                // Create the elements we are going to inject
+                $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $entry->section->id . '"></div>';
             }
-            return $hiddenData;
+            return $injectedHtml;
         });
 
         // Watch the template rendering to see if we are in an entry edit form
@@ -127,8 +126,9 @@ class EntryTypeLock extends Plugin
                     Craft::$app->getRequest()->getSegment(1) == 'entries' &&
                     Craft::$app->getRequest()->getSegment(3) != ''
                 ) {
-                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockEntryBundle::class, View::POS_END);
-                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLockEntry();', View::POS_READY);
+                    // Inject our asset bundle, and start it up with some JS
+                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
+                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
                 }
             }
         );
@@ -143,15 +143,16 @@ class EntryTypeLock extends Plugin
                 if (is_a($element, 'craft\elements\Entry')) {
                     // Get the section ID and section type the entry belongs to
                     $sectionId = $element->section->id;
-                    $sectionType = $element->section->type;
                     // If it is not a single, inject out fields and register the slideout bundle
-                    if ($sectionType != 'single') {
+                    if ($element->section->type != 'single') {
+                        // Get the views namespace
                         $viewNamespace = Craft::$app->getView()->namespace;
+                        // Create the elements we are going to inject (Note: the ID's will automatically be namespaced for the view by Craft)
                         $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $sectionId . '"></div>';
-                        $injectedHtml .= '<div id="entryTypeLockSectionType" data-value="' . $sectionType . '"></div>';
+                        // Inject the elements, our asset bundle, and start it up with some JS
                         $event->html = $injectedHtml . $event->html;
-                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockSlideoutBundle::class, View::POS_END);
-                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLockSlideout("' . $viewNamespace . '");', View::POS_READY);
+                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
+                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLock("' . $viewNamespace . '");', View::POS_READY);
                     }
                 }
 
