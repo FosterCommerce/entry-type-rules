@@ -15,7 +15,7 @@ use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * EntryTypeLockAsset AssetBundle
+ * EntryTypeLockSettingsAsset AssetBundle
  *
  * AssetBundle represents a collection of asset files, such as CSS, JS, images.
  *
@@ -32,7 +32,7 @@ use craft\web\assets\cp\CpAsset;
  * @package   EntryTypeLock
  * @since     1.0.0
  */
-class EntryTypeLockAsset extends AssetBundle
+class EntryTypeLockSettingsAsset extends AssetBundle
 {
     // Public Methods
     // =========================================================================
@@ -53,7 +53,7 @@ class EntryTypeLockAsset extends AssetBundle
         // define the relative path to CSS/JS files that should be registered with the page
         // when this asset bundle is registered
         $this->js = [
-            'js/EntryTypeLock.js',
+            'js/EntryTypeLockSettings.js',
         ];
 
         parent::init();
