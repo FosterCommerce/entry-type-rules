@@ -3,7 +3,7 @@
  * Entry Type Lock plugin for Craft CMS 3.x
  *
  * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
-include entry types based on their user group.
+ * include entry types based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
@@ -13,8 +13,8 @@ namespace fostercommerce\entrytypelock\models;
 
 use fostercommerce\entrytypelock\EntryTypeLock;
 
-use Craft;
 use craft\base\Model;
+use craft\validators\ArrayValidator;
 
 /**
  * EntryTypeLock Settings Model
@@ -36,11 +36,20 @@ class Settings extends Model
     // =========================================================================
 
     /**
-     * Some field model attribute
+     * @var array|string The section and entry type map of rules to limit entry types
      *
-     * @var string
+     * [
+        'pages' => [
+            'blog' => [
+                'limit' => 1,
+                'userGroups' => [
+                    'siteAdmins'
+                ]
+            ]
+        ]
+    ]
      */
-    public $someAttribute = 'Some Default';
+    public $sections = [];
 
     // Public Methods
     // =========================================================================
@@ -58,8 +67,7 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['someAttribute', 'string'],
-            ['someAttribute', 'default', 'value' => 'Some Default'],
+            [['sections'], ArrayValidator::class]
         ];
     }
 }
