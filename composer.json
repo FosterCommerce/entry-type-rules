@@ -11,7 +11,7 @@
         "entry type lock"
     ],
     "support": {
-        "docs": "https://github.com/FosterCommerce/entry-type-lock/blob/master/README.md",
+        "docs": "https://github.com/FosterCommerce/entry-type-lock/blob/main/README.md",
         "issues": "https://github.com/FosterCommerce/entry-type-lock/issues"
     },
     "license": "MIT",
@@ -39,8 +39,8 @@
         "handle": "entry-type-lock",
         "developer": "Foster Commerce",
         "developerUrl": "https://fostercommerce.com",
-        "documentationUrl": "https://github.com/FosterCommerce/entry-type-lock/blob/master/README.md",
-        "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-lock/master/CHANGELOG.md",
+        "documentationUrl": "https://github.com/FosterCommerce/entry-type-lock/blob/main/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-lock/main/CHANGELOG.md",
         "components": {
             "entryTypeLockService": "fostercommerce\\entrytypelock\\services\\EntryTypeLockService"
         },
