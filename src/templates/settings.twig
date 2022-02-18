@@ -13,14 +13,132 @@
  */
 #}
 
+{% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("fostercommerce\\entrytypelock\\assetbundles\\entrytypelock\\EntryTypeLockAsset") %}
+{% do view.registerAssetBundle("pseudoclass\\entrytypelock\\assetbundles\\entrytypelock\\EntryTypeLockSettingsAsset") %}
 
-{{ forms.textField({
-    label: 'Some Field',
-    instructions: 'Enter some setting here.',
-    id: 'someAttribute',
-    name: 'someAttribute',
-    value: settings['someAttribute']})
-}}
+{% set title = "Entry Type Lock" %}
+{% set fullPageForm = true %}
+{% set crumbs = [
+    {
+        label: 'Settings'|t('entry-type-lock'),
+        url: url('settings'),
+    }
+] %}
+
+{% set configOverride = overrides.sections is defined %}
+
+{% set sections = craft.app.sections.allSections %}
+
+{% set groupOptions = [] %}
+{% for group in craft.app.userGroups.allGroups %}
+    {% set groupOptions = groupOptions|merge([{
+        label: group.name,
+        value: group.handle
+    }]) %}
+{% endfor %}
+
+{% block content %}
+
+    {% if configOverride %}
+        <p class="first warning">
+            <span class="icon" aria-hidden="true"></span>
+            <span class="visually-hidden">{{ "Warning"|t('entry-type-lock') }}: </span>
+            {{ "The Entry Type Lock plugin settings are being overridden in the 'config/entry-type-lock.php' file."|t('entry-type-lock') }}
+        </p>
+        <hr />
+    {% endif %}
+
+    {{ actionInput('entry-type-lock/settings/save-settings') }}
+
+    {{ forms.hidden({
+        name: 'pluginHandle',
+        value: 'entry-type-lock'})
+    }}
+
+    {% for section in sections if section.type != 'single' %}
+
+        {% if not loop.first %}<hr />{% endif %}
+
+        <section>
+            <h1 class="text-xl">{{ section.name ~ ' ' ~ section.type|capitalize ~ ' ' ~ "Section"|t('entry-type-lock') }}</h1>
+            <table class="data fullwidth collapsible">
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="nowrap">
+                                {{ "Entry Type"|t('entry-type-lock') }}
+                                <span class="info">{{ "The entry type and its current total entry count."|t('entry-type-lock') }}</span>
+                            </span>
+                        </th>
+                        <th>
+                            <span class="nowrap">
+                                {{ "Limit"|t('entry-type-lock') }}
+                                <span class="info">
+                                    {{ "Limit the number of entries for the entry type."|t('entry-type-lock') }}<br />
+                                    <em>{{ "Leave blank or set to zero to remove limits for the entry type."|t('entry-type-lock') }}</em>
+                                </span>
+                            </span>
+                        </th>
+                        <th>
+                            <span class="nowrap">
+                                {{ "User Groups"|t('entry-type-lock') }}
+                                <span class="info">
+                                    {{ "Limit which user groups can add new entries for the entry type."|t('entry-type-lock') }}<br />
+                                    <em>{{ "Admin users will always be able to add new entries."|t('entry-type-lock') }}</em>
+                                </span>
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entryType in section.entryTypes %}
+                        {% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
+                        {% set limitValue = settings.sections[section.handle][entryType.handle].limit|default('') %}
+                        <tr class="entryTypeLockLimit" data-count="{{ entryTypeCount }}">
+                            <td>
+                                <strong>{{ entryType.name }}</strong><br/>
+                                <span class="entryTypeLockLimit__count inline-block">Entries: {{ entryTypeCount }}</span>
+                                <span class="entryTypeLockLimit__warning inline-block ml-2 warning hidden" style="margin-top: -3px; margin-left: 5px;">
+                                    <span class="icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">{{ "Warning"|t('entry-type-lock') }}: </span>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="entryTypeLockLimit__input">
+                                    {{ forms.textField({
+                                        id: ('entryType_' ~ entryType.id ~ '_limit'),
+                                        name: ('entryType_' ~ entryType.id ~ '_limit'),
+                                        type: 'number',
+                                        size: 5,
+                                        min: 0,
+                                        value: limitValue,
+                                        placeholder: '0',
+                                        unit: "Entries"|t('entry-type-lock'),
+                                    }) }}
+                                </div>
+                            </td>
+                            <td>
+                                {{ forms.checkboxSelectField({
+                                    id: ('entryType_' ~ entryType.id ~ '_userGroups'),
+                                    name: ('entryType_' ~ entryType.id ~ '_userGroups'),
+                                    options: groupOptions,
+                                    showAllOption: true,
+                                    allValue: '',
+                                    values: settings.sections[section.handle][entryType.handle].userGroups|default('')
+                                }) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    {% endfor %}
+
+{% endblock %}
+
+{% js %}
+new Craft.EntryTypeLockSettings;
+{% endjs %}
