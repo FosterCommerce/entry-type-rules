@@ -3,7 +3,7 @@
  * Entry Type Lock plugin for Craft CMS 3.x
  *
  * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
-include entry types based on their user group.
+ * include entry types based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
@@ -12,15 +12,18 @@ include entry types based on their user group.
 namespace fostercommerce\entrytypelock;
 
 use fostercommerce\entrytypelock\services\EntryTypeLockService as EntryTypeLockServiceService;
+use fostercommerce\entrytypelock\assetbundles\entrytypelock\EntryTypeLockAsset;
+use fostercommerce\entrytypelock\services\EntryTypeLockService;
 use fostercommerce\entrytypelock\models\Settings;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
+use craft\base\Element;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
-use craft\web\UrlManager;
-use craft\events\RegisterUrlRulesEvent;
-
+use craft\web\View;
+use craft\events\DefineHtmlEvent;
 use yii\base\Event;
 
 /**
@@ -97,53 +100,81 @@ class EntryTypeLock extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'entry-type-lock/default';
-            }
-        );
+        Craft::setAlias('@plugin', $this->getBasePath());
 
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'entry-type-lock/default/do-something';
+        // Let's put our own data regarding the section into the entry edit page in the CP
+        Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
+            $injectedHtml = '';
+            $entry = $context['entry'];
+            if ($entry != null && $entry->section->type != 'single') {
+                // Create the elements we are going to inject
+                $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $entry->section->id . '"></div>';
             }
-        );
+            return $injectedHtml;
+        });
 
-        // Do something after we're installed
+        // Watch the template rendering to see if we are in an entry edit form
         Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
+            View::class,
+            View::EVENT_AFTER_RENDER_TEMPLATE,
+            function () {
+                // Check the segments to see if we are in an entry edit form, if so register the entry bundle
+                if (
+                    Craft::$app->getRequest()->isCpRequest &&
+                    Craft::$app->getRequest()->getSegment(1) == 'entries' &&
+                    Craft::$app->getRequest()->getSegment(3) != ''
+                ) {
+                    // Inject our asset bundle, and start it up with some JS
+                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockAsset::class, View::POS_END);
+                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
                 }
             }
         );
 
-/**
- * Logging in Craft involves using one of the following methods:
- *
- * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
- * Craft::info(): record a message that conveys some useful information.
- * Craft::warning(): record a warning message that indicates something unexpected has happened.
- * Craft::error(): record a fatal error that should be investigated as soon as possible.
- *
- * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
- *
- * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
- * the category to the method (prefixed with the fully qualified class name) where the constant appears.
- *
- * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
- * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
- *
- * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
- */
+        // Watch the slide out element editor window to see if we are editing an entry in the slide-out
+        Event::on(
+            Element::class,
+            Element::EVENT_DEFINE_SIDEBAR_HTML,
+            function (DefineHtmlEvent $event) {
+                $element = $event->sender;
+                // If the element is a Craft Entry
+                if (is_a($element, 'craft\elements\Entry')) {
+                    // Get the section ID and section type the entry belongs to
+                    $sectionId = $element->section->id;
+                    // If it is not a single, inject out fields and register the slideout bundle
+                    if ($element->section->type != 'single') {
+                        // Get the views namespace
+                        $viewNamespace = Craft::$app->getView()->namespace;
+                        // Create the elements we are going to inject (Note: the ID's will automatically be namespaced for the view by Craft)
+                        $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $sectionId . '"></div>';
+                        // Inject the elements, our asset bundle, and start it up with some JS
+                        $event->html = $injectedHtml . $event->html;
+                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockAsset::class, View::POS_END);
+                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLock("' . $viewNamespace . '");', View::POS_READY);
+                    }
+                }
+
+            }
+        );
+
+        /**
+         * Logging in Craft involves using one of the following methods:
+         *
+         * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
+         * Craft::info(): record a message that conveys some useful information.
+         * Craft::warning(): record a warning message that indicates something unexpected has happened.
+         * Craft::error(): record a fatal error that should be investigated as soon as possible.
+         *
+         * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
+         *
+         * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
+         * the category to the method (prefixed with the fully qualified class name) where the constant appears.
+         *
+         * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
+         * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
+         *
+         * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
+         */
         Craft::info(
             Craft::t(
                 'entry-type-lock',
@@ -154,32 +185,36 @@ class EntryTypeLock extends Plugin
         );
     }
 
+    /**
+     * Intercepts the plugin settings page response so we can check the config override file
+     * (if it exists) and so we can process the Post response in our own settings controller method
+     * instead of using the general Craft settings HTML method to render the settings page.
+     * @inheritdoc
+     */
+    public function getSettingsResponse()
+    {
+        $overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
+
+        return \Craft::$app
+            ->controller
+            ->renderTemplate('entry-type-lock/settings',
+                [
+                    'settings' => $this->getSettings(),
+                    'overrides' => $overrides
+                ]
+            );
+    }
+
     // Protected Methods
     // =========================================================================
 
     /**
      * Creates and returns the model used to store the plugin’s settings.
      *
-     * @return \craft\base\Model|null
+     * @return Model|null
      */
     protected function createSettingsModel()
     {
         return new Settings();
-    }
-
-    /**
-     * Returns the rendered settings HTML, which will be inserted into the content
-     * block on the settings page.
-     *
-     * @return string The rendered settings HTML
-     */
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->view->renderTemplate(
-            'entry-type-lock/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
-        );
     }
 }
