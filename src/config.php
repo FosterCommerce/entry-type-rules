@@ -24,8 +24,27 @@ include entry types based on their user group.
  */
 
 return [
-
-    // This controls blah blah blah
-    "someAttribute" => true,
-
+    'sections' => [
+        /*
+        // Add each section you want to lock down entry types for
+        'pages' => [
+            // Add each entry type in the section you want to lock (by limit and/or user group)
+            'contactPage' => [
+                'limit' => 1,
+                'userGroups' => [
+                    'adminGroup1',
+                    'adminGroup2'
+                ]
+            ],
+            'blogLanding' => [
+                'limit' => 1
+            ]
+        ],
+        'blog' => [
+            'pressRelease' => [
+                'userGroups' => ['adminGroup1']
+            ]
+        ]
+        */
+    ]
 ];
