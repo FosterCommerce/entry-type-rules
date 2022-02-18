@@ -3,7 +3,7 @@
  * Entry Type Lock plugin for Craft CMS 3.x
  *
  * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
-include entry types based on their user group.
+ * include entry types based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
@@ -15,6 +15,8 @@ use fostercommerce\entrytypelock\EntryTypeLock;
 
 use Craft;
 use craft\base\Component;
+use craft\elements\Entry;
+use yii\base\InvalidConfigException;
 
 /**
  * EntryTypeLockService Service
@@ -40,17 +42,90 @@ class EntryTypeLockService extends Component
      *
      * From any other plugin file, call it like this:
      *
-     *     EntryTypeLock::$plugin->entryTypeLockService->exampleService()
+     *     EntryTypeLock::$plugin->entryTypeLockService->getLockedEntryTypes($sectionId)
      *
+     * @param $sectionId
      * @return mixed
      */
-    public function exampleService()
+    public function getLockedEntryTypes($sectionId)
     {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (EntryTypeLock::$plugin->getSettings()->someAttribute) {
+        // We will return an array of locked entry type IDs
+        $lockedEntryTypes = [];
+
+        // Get the plugins settings
+        $settings = EntryTypeLock::$plugin->getSettings();
+
+        // Get all the entry types for this section into an array
+        $sectionEntryTypes = Craft::$app->sections->getEntryTypesBySectionId($sectionId);
+        $entryTypesIdsMap = [];
+        foreach ($sectionEntryTypes as $entryType) {
+            $entryTypesIdsMap[$entryType->handle] = (int) $entryType->id;
         }
 
-        return $result;
+        // Get the section handle we are dealing with
+        $sectionHandle = Craft::$app->sections->getSectionById($sectionId)->handle;
+
+        // Get the settings for this section
+        $lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
+
+        // Get the current user groups
+        $user = Craft::$app->getUser();
+        $userGroups = $user->getIdentity()->getGroups();
+        $userGroupArray = [];
+        foreach ($userGroups as $group) {
+            array_push($userGroupArray, $group->handle);
+        }
+
+        // Loop through the locked entry type settings
+        foreach ($lockedTypesSettings as $typeHandle => $setting) {
+            // Get the count of each entry type and compare it to the limit value
+            if (isset($setting['limit'])) {
+                $entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
+                if ($entryCount >= $setting['limit']) {
+                    array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+                }
+            }
+
+            // Check the users groups against the userGroup setting
+            if (isset($setting['userGroups'])) {
+                $matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
+
+                if(!$matchedGroups && !$user->getIsAdmin()) {
+                    array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
+                }
+            }
+        }
+
+        return array_unique($lockedEntryTypes);
+    }
+
+    /**
+     * This function formats the settings form parameters and converts them into the array
+     * structure required by the plugins settings
+     *
+     * From any other plugin file, call it like this:
+     *
+     *     EntryTypeLock::$plugin->entryTypeLockService->formatSectionsSettings()
+     *
+     * @param $formParams
+     * @return array
+     * @throws InvalidConfigException
+     */
+    public function formatSectionsSettings($formParams)
+    {
+        $sections = [];
+
+        foreach ($formParams as $key => $value) {
+            if (str_contains($key, 'entryType_') and ($value !== '' and $value !== '0')) {
+                preg_match('/entryType_([0-9]+)_/', $key, $m);
+                $entryType = Craft::$app->sections->getEntryTypeById($m[1]);
+                $section = $entryType->getSection();
+                $paramParts = explode('_', $key);
+                $param = end($paramParts);
+                $sections[$section->handle][$entryType->handle][$param] = (is_numeric($value) ? (int) $value : $value);
+            }
+        }
+
+        return $sections;
     }
 }
