@@ -1,7 +1,6 @@
 {
     "name": "fostercommerce/entry-type-lock",
-    "description": "A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
-include entry types based on their user group.",
+    "description": "A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group.",
     "type": "craft-plugin",
     "version": "1.0.0",
     "keywords": [
