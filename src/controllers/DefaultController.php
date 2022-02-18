@@ -2,10 +2,11 @@
 /**
  * Entry Type Lock plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group
+ * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
+include entry types based on their user group.
  *
  * @link      https://fostercommerce.com
- * @copyright Copyright (c) 2021 Foster Commerce
+ * @copyright Copyright (c) 2022 Foster Commerce
  */
 
 namespace fostercommerce\entrytypelock\controllers;
@@ -46,7 +47,7 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = [];
+    protected $allowAnonymous = ['index', 'do-something'];
 
     // Public Methods
     // =========================================================================
@@ -59,20 +60,21 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        $result = [
-            'sectionId' => 0,
-            'lockedEntryTypes' => []
-        ];
+        $result = 'Welcome to the DefaultController actionIndex() method';
 
-        // Get the section ID from a query param we will include in the ajax request
-        $sectionId = Craft::$app->request->getQueryParam('sectionId');
+        return $result;
+    }
 
-        if ($sectionId) {
-            $result['sectionId'] = $sectionId;
-            $result['lockedEntryTypes'] = EntryTypeLock::$plugin->entryTypeLockService->getLockedEntryTypes($sectionId);
-            return json_encode($result);
-        } else {
-            return $result;
-        }
+    /**
+     * Handle a request going to our plugin's actionDoSomething URL,
+     * e.g.: actions/entry-type-lock/default/do-something
+     *
+     * @return mixed
+     */
+    public function actionDoSomething()
+    {
+        $result = 'Welcome to the DefaultController actionDoSomething() method';
+
+        return $result;
     }
 }

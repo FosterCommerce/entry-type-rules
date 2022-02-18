@@ -17,9 +17,7 @@ use Craft;
 use craft\base\Model;
 
 /**
- * EntryTypeLock Settings Model
- *
- * This is a model used to define the plugin's settings.
+ * EntryTypeLockModel Model
  *
  * Models are containers for data. Just about every time information is passed
  * between services, controllers, and templates in Craft, it’s passed via a model.
@@ -30,13 +28,13 @@ use craft\base\Model;
  * @package   EntryTypeLock
  * @since     1.0.0
  */
-class Settings extends Model
+class EntryTypeLockModel extends Model
 {
     // Public Properties
     // =========================================================================
 
     /**
-     * Some field model attribute
+     * Some model attribute
      *
      * @var string
      */

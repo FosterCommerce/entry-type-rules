@@ -2,28 +2,26 @@
 /**
  * Entry Type Lock plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group
+ * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
+include entry types based on their user group.
  *
  * @link      https://fostercommerce.com
- * @copyright Copyright (c) 2021 Foster Commerce
+ * @copyright Copyright (c) 2022 Foster Commerce
  */
 
 namespace fostercommerce\entrytypelock;
 
 use fostercommerce\entrytypelock\services\EntryTypeLockService as EntryTypeLockServiceService;
+use fostercommerce\entrytypelock\models\Settings;
 
 use Craft;
 use craft\base\Plugin;
-use craft\base\Element;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
-use craft\web\View;
-use craft\events\DefineHtmlEvent;
-use yii\base\Event;
+use craft\web\UrlManager;
+use craft\events\RegisterUrlRulesEvent;
 
-use fostercommerce\entrytypelock\resources\EntryTypeLockBundle;
-use fostercommerce\entrytypelock\services\EntryTypeLockService;
-use fostercommerce\entrytypelock\models\Settings;
+use yii\base\Event;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -40,6 +38,8 @@ use fostercommerce\entrytypelock\models\Settings;
  * @since     1.0.0
  *
  * @property  EntryTypeLockServiceService $entryTypeLockService
+ * @property  Settings $settings
+ * @method    Settings getSettings()
  */
 class EntryTypeLock extends Plugin
 {
@@ -69,7 +69,7 @@ class EntryTypeLock extends Plugin
      *
      * @var bool
      */
-    public $hasCpSettings = false;
+    public $hasCpSettings = true;
 
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
@@ -77,11 +77,6 @@ class EntryTypeLock extends Plugin
      * @var bool
      */
     public $hasCpSection = false;
-
-    protected function createSettingsModel()
-    {
-        return new Settings();
-    }
 
     // Public Methods
     // =========================================================================
@@ -102,71 +97,31 @@ class EntryTypeLock extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        Craft::setAlias('@plugin', $this->getBasePath());
-
-        // Let's put our own data regarding the section into the entry edit page in the CP
-        Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
-            $injectedHtml = '';
-            $entry = $context['entry'];
-            if ($entry != null && $entry->section->type != 'single') {
-                // Create the elements we are going to inject
-                $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $entry->section->id . '"></div>';
-            }
-            return $injectedHtml;
-        });
-
-        // Watch the template rendering to see if we are in an entry edit form
+        // Register our site routes
         Event::on(
-            View::class,
-            View::EVENT_AFTER_RENDER_TEMPLATE,
-            function () {
-                // Check the segments to see if we are in an entry edit form, if so register the entry bundle
-                if (
-                    Craft::$app->getRequest()->isCpRequest &&
-                    Craft::$app->getRequest()->getSegment(1) == 'entries' &&
-                    Craft::$app->getRequest()->getSegment(3) != ''
-                ) {
-                    // Inject our asset bundle, and start it up with some JS
-                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
-                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
-                }
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['siteActionTrigger1'] = 'entry-type-lock/default';
             }
         );
 
-        // Watch the slide out element editor window to see if we are editing an entry in the slideout
+        // Register our CP routes
         Event::on(
-            Element::class,
-            Element::EVENT_DEFINE_SIDEBAR_HTML,
-            function (DefineHtmlEvent $event) {
-                $element = $event->sender;
-                // If the element is a Craft Entry
-                if (is_a($element, 'craft\elements\Entry')) {
-                    // Get the section ID and section type the entry belongs to
-                    $sectionId = $element->section->id;
-                    // If it is not a single, inject out fields and register the slideout bundle
-                    if ($element->section->type != 'single') {
-                        // Get the views namespace
-                        $viewNamespace = Craft::$app->getView()->namespace;
-                        // Create the elements we are going to inject (Note: the ID's will automatically be namespaced for the view by Craft)
-                        $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $sectionId . '"></div>';
-                        // Inject the elements, our asset bundle, and start it up with some JS
-                        $event->html = $injectedHtml . $event->html;
-                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockBundle::class, View::POS_END);
-                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLock("' . $viewNamespace . '");', View::POS_READY);
-                    }
-                }
-
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['cpActionTrigger1'] = 'entry-type-lock/default/do-something';
             }
         );
 
-        // When the plugin is installed
+        // Do something after we're installed
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
                     // We were just installed
-                    // TODO: Show warnings of existing limit breaches
                 }
             }
         );
@@ -202,4 +157,29 @@ class EntryTypeLock extends Plugin
     // Protected Methods
     // =========================================================================
 
+    /**
+     * Creates and returns the model used to store the plugin’s settings.
+     *
+     * @return \craft\base\Model|null
+     */
+    protected function createSettingsModel()
+    {
+        return new Settings();
+    }
+
+    /**
+     * Returns the rendered settings HTML, which will be inserted into the content
+     * block on the settings page.
+     *
+     * @return string The rendered settings HTML
+     */
+    protected function settingsHtml(): string
+    {
+        return Craft::$app->view->renderTemplate(
+            'entry-type-lock/settings',
+            [
+                'settings' => $this->getSettings()
+            ]
+        );
+    }
 }

@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Entry Type Lock plugin for Craft CMS 3.x
+ *
+ * Entry Type Lock Settings.twig
+ *
+ * @author    Foster Commerce
+ * @copyright Copyright (c) 2022 Foster Commerce
+ * @link      https://fostercommerce.com
+ * @package   EntryTypeLock
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("fostercommerce\\entrytypelock\\assetbundles\\entrytypelock\\EntryTypeLockAsset") %}
+
+{{ forms.textField({
+    label: 'Some Field',
+    instructions: 'Enter some setting here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: settings['someAttribute']})
+}}
