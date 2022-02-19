@@ -21,7 +21,7 @@
 
 		// Initialization method
 		init: function(namespace) {
-			var self = this;
+			const self = this;
 			namespace = namespace || null;
 
 			// Get the data we need to run the lockEntryTypes method
@@ -40,18 +40,9 @@
 			self.lockEntryTypes();
 		},
 
-		// Method for checking URL params
-		urlParam: function (name) {
-			var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-			if (results == null) {
-				return 0;
-			}
-			return results[1] || 0;
-		},
-
 		// Method that calls the plugin controller, and locks down the entry types selector
 		lockEntryTypes: function() {
-			var self = this;
+			const self = this;
 
 			if (self.sectionId && self.$typeSelector.length) {
 
@@ -69,13 +60,16 @@
 							self.$typeSelector.find('option').filter('[value=' + entryType + ']').prop('disabled', true);
 						});
 
-						// If we are in a regular entry page, we need to add some logic to reset the selected type to the first available one
-						if (!self.namespace && self.urlParam('fresh') === 1) {
-							var firstEnabledOption = self.$typeSelector.children('option:enabled').eq(0);
-							var selectedOption = self.$typeSelector.children('option:selected').eq(0);
+						// Find out if we are on the new entry (URL param "fresh" is present)
+						const urlParams = new URLSearchParams(window.location.search);
 
-							if (selectedOption.prop('disabled') ) {
-								firstEnabledOption.prop('selected', true);
+						// If this is a new entry, we need to set the entry type selector to the first available option
+						if (!self.namespace && urlParams.has('fresh')) {
+							const $available = self.$typeSelector.children('option:enabled').first();
+							const $selected = self.$typeSelector.children('option:selected').first();
+
+							if ($selected.prop('disabled') ) {
+								$available.prop('selected', true);
 								self.$typeSelector.trigger('change');
 							}
 						}
