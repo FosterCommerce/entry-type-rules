@@ -16,7 +16,7 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("pseudoclass\\entrytypelock\\assetbundles\\entrytypelock\\EntryTypeLockSettingsAsset") %}
+{% do view.registerAssetBundle("fostercommerce\\entrytypelock\\assetbundles\\entrytypelock\\EntryTypeLockSettingsAsset") %}
 
 {% set title = "Entry Type Lock" %}
 {% set fullPageForm = true %}
@@ -62,7 +62,7 @@
         {% if not loop.first %}<hr />{% endif %}
 
         <section>
-            <h1 class="text-xl">{{ section.name ~ ' ' ~ section.type|capitalize ~ ' ' ~ "Section"|t('entry-type-lock') }}</h1>
+            <h2 class="text-xl">{{ section.name ~ ' ' ~ section.type|capitalize ~ ' ' ~ "Section"|t('entry-type-lock') }}</h2>
             <table class="data fullwidth collapsible">
                 <thead>
                     <tr>
