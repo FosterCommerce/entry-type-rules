@@ -57,7 +57,6 @@ entries, and/or select the users groups which can create new entries of the entr
 The limit field allows you to set an entry limit for the entry type. Once the number of entries has reached that
 limit, the entry types option will be disabled in the entry edit form. If you set the limit to a number below the
 current number of entries of that entry type, a warning will be displayed.
-
 *NOTE: The setting will still be saved regardless of the warning, its just there to inform you.*
 
 ![Screenshot](resources/img/plugin-warning.png)
@@ -66,7 +65,6 @@ current number of entries of that entry type, a warning will be displayed.
 
 The user groups field allows you to select the user groups that can create new entries of the entry type. If a user
 is not in any of the specified groups, the entry types option will be disabled in the entry edit form.
-
 *NOTE: Admin users are never restricted from adding entries*
 
 ### Configure using a Config File
