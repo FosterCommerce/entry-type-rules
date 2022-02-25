@@ -11,7 +11,7 @@
 
 namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytyperules\EntryTypeRules;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService;
 
 use Craft;
 use craft\web\Controller;
@@ -70,7 +70,7 @@ class DefaultController extends Controller
 
         if ($sectionId) {
             $result['sectionId'] = $sectionId;
-            $result['lockedEntryTypes'] = EntryTypeRules::$plugin->entryTypeRulesService->getLockedEntryTypes($sectionId);
+            $result['lockedEntryTypes'] = EntryTypeRulesService::instance()->getLockedEntryTypes($sectionId);
             return json_encode($result);
         } else {
             return $result;
