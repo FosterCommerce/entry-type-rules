@@ -124,7 +124,7 @@ return [
 
 ## Entry Type Rules Roadmap
 
-The following is a list of additional features we are working on to incorporate into Entry Type Lock:
+The following is a list of additional features we are working on to incorporate into Entry Type Rules:
 
 * Compatibility with Craft 4
 * Ability to configure rules for entry types in sections based on different sites in a Craft multi-site setup

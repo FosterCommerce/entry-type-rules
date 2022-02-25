@@ -31,7 +31,7 @@ modules:
       projectConfig: {}
       migrations: []
       plugins:
-        entry-type-lock:
+        entry-type-rules:
           class: '\fostercommerce\entrytyperules\EntryTypeRules'
           handle: entry-type-rules
       cleanup: true
