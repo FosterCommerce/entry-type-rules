@@ -1,20 +1,20 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock;
+namespace fostercommerce\entrytyperules;
 
-use fostercommerce\entrytypelock\services\EntryTypeLockService as EntryTypeLockServiceService;
-use fostercommerce\entrytypelock\assetbundles\entrytypelock\EntryTypeLockAsset;
-use fostercommerce\entrytypelock\services\EntryTypeLockService;
-use fostercommerce\entrytypelock\models\Settings;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService as EntryTypeRulesServiceService;
+use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService;
+use fostercommerce\entrytyperules\models\Settings;
 
 use Craft;
 use craft\base\Model;
@@ -37,23 +37,23 @@ use yii\base\Event;
  * https://docs.craftcms.com/v3/extend/
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  *
- * @property  EntryTypeLockServiceService $entryTypeLockService
+ * @property  EntryTypeRulesServiceService $entryTypeRulesService
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
-class EntryTypeLock extends Plugin
+class EntryTypeRules extends Plugin
 {
     // Static Properties
     // =========================================================================
 
     /**
      * Static property that is an instance of this plugin class so that it can be accessed via
-     * EntryTypeLock::$plugin
+     * EntryTypeRules::$plugin
      *
-     * @var EntryTypeLock
+     * @var EntryTypeRules
      */
     public static $plugin;
 
@@ -86,7 +86,7 @@ class EntryTypeLock extends Plugin
 
     /**
      * Set our $plugin static property to this class so that it can be accessed via
-     * EntryTypeLock::$plugin
+     * EntryTypeRules::$plugin
      *
      * Called after the plugin class is instantiated; do any one-time initialization
      * here such as hooks and events.
@@ -108,7 +108,7 @@ class EntryTypeLock extends Plugin
             $entry = $context['entry'];
             if ($entry != null && $entry->section->type != 'single') {
                 // Create the elements we are going to inject
-                $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $entry->section->id . '"></div>';
+                $injectedHtml = '<div id="entryTypeRulesSectionId" data-value="' . $entry->section->id . '"></div>';
             }
             return $injectedHtml;
         });
@@ -125,8 +125,8 @@ class EntryTypeLock extends Plugin
                     Craft::$app->getRequest()->getSegment(3) != ''
                 ) {
                     // Inject our asset bundle, and start it up with some JS
-                    Craft::$app->getView()->registerAssetBundle(EntryTypeLockAsset::class, View::POS_END);
-                    Craft::$app->getView()->registerJs('new Craft.EntryTypeLock();', View::POS_READY);
+                    Craft::$app->getView()->registerAssetBundle(EntryTypeRulesAsset::class, View::POS_END);
+                    Craft::$app->getView()->registerJs('new Craft.EntryTypeRules();', View::POS_READY);
                 }
             }
         );
@@ -146,11 +146,11 @@ class EntryTypeLock extends Plugin
                         // Get the views namespace
                         $viewNamespace = Craft::$app->getView()->namespace;
                         // Create the elements we are going to inject (Note: the ID's will automatically be namespaced for the view by Craft)
-                        $injectedHtml = '<div id="entryTypeLockSectionId" data-value="' . $sectionId . '"></div>';
+                        $injectedHtml = '<div id="entryTypeRulesSectionId" data-value="' . $sectionId . '"></div>';
                         // Inject the elements, our asset bundle, and start it up with some JS
                         $event->html = $injectedHtml . $event->html;
-                        Craft::$app->getView()->registerAssetBundle(EntryTypeLockAsset::class, View::POS_END);
-                        Craft::$app->getView()->registerJs('new Craft.EntryTypeLock("' . $viewNamespace . '");', View::POS_READY);
+                        Craft::$app->getView()->registerAssetBundle(EntryTypeRulesAsset::class, View::POS_END);
+                        Craft::$app->getView()->registerJs('new Craft.EntryTypeRules("' . $viewNamespace . '");', View::POS_READY);
                     }
                 }
 
@@ -177,7 +177,7 @@ class EntryTypeLock extends Plugin
          */
         Craft::info(
             Craft::t(
-                'entry-type-lock',
+                'entry-type-rules',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
@@ -197,7 +197,7 @@ class EntryTypeLock extends Plugin
 
         return \Craft::$app
             ->controller
-            ->renderTemplate('entry-type-lock/settings',
+            ->renderTemplate('entry-type-rules/settings',
                 [
                     'settings' => $this->getSettings(),
                     'overrides' => $overrides

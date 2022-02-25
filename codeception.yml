@@ -32,8 +32,8 @@ modules:
       migrations: []
       plugins:
         entry-type-lock:
-          class: '\fostercommerce\entrytypelock\EntryTypeLock'
-          handle: entry-type-lock
+          class: '\fostercommerce\entrytyperules\EntryTypeRules'
+          handle: entry-type-rules
       cleanup: true
       transaction: true
       dbSetup: {clean: true, setupCraft: true}

@@ -1,21 +1,21 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock\assetbundles\entrytypelock;
+namespace fostercommerce\entrytypelock\assetbundles\entrytyperules;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * EntryTypeLockAsset AssetBundle
+ * EntryTypeRulesAsset AssetBundle
  *
  * AssetBundle represents a collection of asset files, such as CSS, JS, images.
  *
@@ -29,10 +29,10 @@ use craft\web\assets\cp\CpAsset;
  * http://www.yiiframework.com/doc-2.0/guide-structure-assets.html
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
-class EntryTypeLockAsset extends AssetBundle
+class EntryTypeRulesAsset extends AssetBundle
 {
     // Public Methods
     // =========================================================================
@@ -43,7 +43,7 @@ class EntryTypeLockAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@fostercommerce/entrytypelock/assetbundles/entrytypelock/dist";
+        $this->sourcePath = "@fostercommerce/entrytyperules/assetbundles/entrytyperules/dist";
 
         // define the dependencies
         $this->depends = [
@@ -53,7 +53,7 @@ class EntryTypeLockAsset extends AssetBundle
         // define the relative path to CSS/JS files that should be registered with the page
         // when this asset bundle is registered
         $this->js = [
-            'js/EntryTypeLock.js',
+            'js/EntryTypeRules.js',
         ];
 
         parent::init();

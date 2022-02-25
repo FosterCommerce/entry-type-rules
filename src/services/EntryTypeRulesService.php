@@ -1,17 +1,17 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock\services;
+namespace fostercommerce\entrytyperules\services;
 
-use fostercommerce\entrytypelock\EntryTypeLock;
+use fostercommerce\entrytyperules\EntryTypeRules;
 
 use Craft;
 use craft\base\Component;
@@ -19,7 +19,7 @@ use craft\elements\Entry;
 use yii\base\InvalidConfigException;
 
 /**
- * EntryTypeLockService Service
+ * EntryTypeRulesService Service
  *
  * All of your plugin’s business logic should go in services, including saving data,
  * retrieving data, etc. They provide APIs that your controllers, template variables,
@@ -31,7 +31,7 @@ use yii\base\InvalidConfigException;
  * @package   EntryTypeLock
  * @since     1.0.0
  */
-class EntryTypeLockService extends Component
+class EntryTypeRulesService extends Component
 {
     // Public Methods
     // =========================================================================
@@ -42,7 +42,7 @@ class EntryTypeLockService extends Component
      *
      * From any other plugin file, call it like this:
      *
-     *     EntryTypeLock::$plugin->entryTypeLockService->getLockedEntryTypes($sectionId)
+     *     EntryTypeRules::$plugin->entryTypeRulesService->getLockedEntryTypes($sectionId)
      *
      * @param $sectionId
      * @return mixed
@@ -53,7 +53,7 @@ class EntryTypeLockService extends Component
         $lockedEntryTypes = [];
 
         // Get the plugins settings
-        $settings = EntryTypeLock::$plugin->getSettings();
+        $settings = EntryTypeRules::$plugin->getSettings();
 
         // Get all the entry types for this section into an array
         $sectionEntryTypes = Craft::$app->sections->getEntryTypesBySectionId($sectionId);
@@ -105,7 +105,7 @@ class EntryTypeLockService extends Component
      *
      * From any other plugin file, call it like this:
      *
-     *     EntryTypeLock::$plugin->entryTypeLockService->formatSectionsSettings()
+     *     EntryTypeRules::$plugin->entryTypeRulesService->formatSectionsSettings()
      *
      * @param $formParams
      * @return array

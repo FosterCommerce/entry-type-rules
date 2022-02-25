@@ -1,6 +1,6 @@
 {
-    "name": "fostercommerce/entry-type-lock",
-    "description": "A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can include entry types based on their user group.",
+    "name": "fostercommerce/entry-type-rules",
+    "description": "A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can include entry type entries based on their user group.",
     "type": "craft-plugin",
     "version": "1.0.0",
     "keywords": [
@@ -11,8 +11,8 @@
         "entry type lock"
     ],
     "support": {
-        "docs": "https://github.com/FosterCommerce/entry-type-lock/blob/main/README.md",
-        "issues": "https://github.com/FosterCommerce/entry-type-lock/issues"
+        "docs": "https://github.com/FosterCommerce/entry-type-rules/blob/main/README.md",
+        "issues": "https://github.com/FosterCommerce/entry-type-rules/issues"
     },
     "license": "MIT",
     "authors": [
@@ -35,15 +35,15 @@
         }
     },
     "extra": {
-        "name": "Entry Type Lock",
-        "handle": "entry-type-lock",
+        "name": "Entry Type Rules",
+        "handle": "entry-type-rules",
         "developer": "Foster Commerce",
         "developerUrl": "https://fostercommerce.com",
-        "documentationUrl": "https://github.com/FosterCommerce/entry-type-lock/blob/main/README.md",
-        "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-lock/main/CHANGELOG.md",
+        "documentationUrl": "https://github.com/FosterCommerce/entry-type-rules/blob/main/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-rules/main/CHANGELOG.md",
         "components": {
-            "entryTypeLockService": "fostercommerce\\entrytypelock\\services\\EntryTypeLockService"
+            "entryTypeLockService": "fostercommerce\\entrytyperules\\services\\EntryTypeRulesService"
         },
-        "class": "fostercommerce\\entrytypelock\\EntryTypeLock"
+        "class": "fostercommerce\\entrytyperules\\EntryTypeRules"
     }
 }

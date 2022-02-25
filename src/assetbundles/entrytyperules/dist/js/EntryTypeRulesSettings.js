@@ -1,18 +1,18 @@
 /**
- * Entry Type Lock plugin for Craft CMS
+ * Entry Type Rules plugin for Craft CMS
  *
- * Entry Type Lock JS
+ * Entry Type Rules Settings JS
  *
  * @author    Foster Commerce
  * @copyright Copyright (c) 2022 Foster Commerce
  * @link      https://fostercommerce.com
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 
 (function($) {
 
-	Craft.EntryTypeLockSettings = Garnish.Base.extend({
+	Craft.EntryTypeRulesSettings = Garnish.Base.extend({
 
 		// Default values
 		$limitFields: null,
@@ -22,7 +22,7 @@
 			const self = this;
 
 			// Get all the entry limit fields
-			self.$limitFields = $('.entryTypeLockLimit input[name$="_limit"]');
+			self.$limitFields = $('.entryTypeRulesLimit input[name$="_limit"]');
 
 			// Run through all the limit fields to check if any warnings need to be displayed
 			self.$limitFields.each(function() {
@@ -40,10 +40,10 @@
 		highlightLimit: function(field) {
 			const $input = $(field);
 			const inputValue = $input[0].value;
-			const $parent = $input.closest('.entryTypeLockLimit');
-			const $count = $parent.find('.entryTypeLockLimit__count');
-			const $warning = $parent.find('.entryTypeLockLimit__warning');
-			const $label = $parent.find('.entryTypeLockLimit__input .label');
+			const $parent = $input.closest('.entryTypeRulesLimit');
+			const $count = $parent.find('.entryTypeRulesLimit__count');
+			const $warning = $parent.find('.entryTypeRulesLimit__warning');
+			const $label = $parent.find('.entryTypeRulesLimit__input .label');
 			const currentCount = $parent.data('count');
 			if ((inputValue !== '' && inputValue !== '0') && currentCount > parseInt(inputValue)) {
 				$label[0].classList.add('warning');

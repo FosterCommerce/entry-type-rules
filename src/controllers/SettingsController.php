@@ -1,17 +1,17 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock\controllers;
+namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytypelock\services\EntryTypeLockService;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService;
 
 use Craft;
 use craft\errors\MissingComponentException;
@@ -34,7 +34,7 @@ class SettingsController extends Controller
 
     /**
      * Handle a request going to our plugin's action URL for saving settings,
-     * e.g.: actions/craft-entry-type-lock/save-settings
+     * e.g.: actions/craft-entry-type-rules/save-settings
      *
      * @throws BadRequestHttpException
      * @throws InvalidConfigException
@@ -56,7 +56,7 @@ class SettingsController extends Controller
         // Get the posted form values from the settings page submission and send them to the service to be formatted
         $request = Craft::$app->getRequest();
         $formParams = $request->getBodyParams();
-        $settings['sections'] = EntryTypeLockService::instance()->formatSectionsSettings($formParams);
+        $settings['sections'] = EntryTypeRulesService::instance()->formatSectionsSettings($formParams);
 
         // Save the settings, and if they fail, display an error
         if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {

@@ -1,33 +1,33 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
 /**
- * Entry Type Lock en Translation
+ * Entry Type Rules en Translation
  *
- * Returns an array with the string to be translated (as passed to `Craft::t('entry-type-lock', '...')`) as
+ * Returns an array with the string to be translated (as passed to `Craft::t('entry-type-rules', '...')`) as
  * the key, and the translation as the value.
  *
  * http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 return [
-    'Entry Type Lock' => 'Entry Type Lock',
+    'Entry Type Rules' => 'Entry Type Rules',
     'Edit Plugin Settings' => 'Edit Plugin Settings',
     '{name} plugin loaded' => '{name} plugin loaded',
     'Settings' => 'Settings',
     'Warning' => 'Warning',
-    'The Entry Type Lock plugin settings are being overridden in the \'config/entry-type-lock.php\' file.' => 'The Entry Type Lock plugin settings are being overridden in the \'config/entry-type-lock.php\' file.',
+    'The Entry Type Rules plugin settings are being overridden in the \'config/entry-type-rules.php\' file.' => 'The Entry Type Rules plugin settings are being overridden in the \'config/entry-type-rules.php\' file.',
     'Section' => 'Section',
     'Entry Type' => 'Entry Type',
     'The entry type and its current total entry count.' => 'The entry type and its current total entry count.',

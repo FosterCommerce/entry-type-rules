@@ -1,17 +1,17 @@
 <?php
 /**
- * Entry Type Lock plugin for Craft CMS 3.x
+ * Entry Type Rules plugin for Craft CMS 3.x
  *
- * A Craft plugin that allows you to lock down the number of entry types in a Craft section and/or limit who can
- * include entry types based on their user group.
+ * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
+ * include entry type entries based on their user group.
  *
  * @link      https://fostercommerce.com
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock\controllers;
+namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytypelock\EntryTypeLock;
+use fostercommerce\entrytypelock\EntryTypeRules;
 
 use Craft;
 use craft\web\Controller;
@@ -33,7 +33,7 @@ use craft\web\Controller;
  * https://craftcms.com/docs/plugins/controllers
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 class DefaultController extends Controller
@@ -54,7 +54,7 @@ class DefaultController extends Controller
 
     /**
      * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/entry-type-lock/default
+     * e.g.: actions/entry-type-rules/default
      *
      * @return mixed
      */
@@ -70,7 +70,7 @@ class DefaultController extends Controller
 
         if ($sectionId) {
             $result['sectionId'] = $sectionId;
-            $result['lockedEntryTypes'] = EntryTypeLock::$plugin->entryTypeLockService->getLockedEntryTypes($sectionId);
+            $result['lockedEntryTypes'] = EntryTypeRules::$plugin->entryTypeRulesService->getLockedEntryTypes($sectionId);
             return json_encode($result);
         } else {
             return $result;
