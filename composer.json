@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-          "fostercommerce\\entrytypelock\\": "src/"
+          "fostercommerce\\entrytyperules\\": "src/"
         }
     },
     "extra": {
@@ -42,7 +42,7 @@
         "documentationUrl": "https://github.com/FosterCommerce/entry-type-rules/blob/main/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/FosterCommerce/entry-type-rules/main/CHANGELOG.md",
         "components": {
-            "entryTypeLockService": "fostercommerce\\entrytyperules\\services\\EntryTypeRulesService"
+            "entryTypeRulesService": "fostercommerce\\entrytyperules\\services\\EntryTypeRulesService"
         },
         "class": "fostercommerce\\entrytyperules\\EntryTypeRules"
     }

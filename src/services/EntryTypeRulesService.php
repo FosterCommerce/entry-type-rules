@@ -28,7 +28,7 @@ use yii\base\InvalidConfigException;
  * https://craftcms.com/docs/plugins/services
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 class EntryTypeRulesService extends Component

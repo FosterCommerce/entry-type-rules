@@ -9,19 +9,19 @@ include entry types based on their user group.
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelocktests\unit;
+namespace fostercommerce\entrytyperulestests\unit;
 
 use Codeception\Test\Unit;
 use UnitTester;
 use Craft;
-use fostercommerce\entrytypelock\EntryTypeLock;
+use fostercommerce\entrytyperules\EntryTypeRules;
 
 /**
  * ExampleUnitTest
  *
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 class ExampleUnitTest extends Unit
@@ -46,8 +46,8 @@ class ExampleUnitTest extends Unit
     public function testPluginInstance()
     {
         $this->assertInstanceOf(
-            EntryTypeLock::class,
-            EntryTypeLock::$plugin
+            EntryTypeRules::class,
+            EntryTypeRules::$plugin
         );
     }
 

@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2022 Foster Commerce
  */
 
-namespace fostercommerce\entrytypelock\assetbundles\entrytyperules;
+namespace fostercommerce\entrytyperules\assetbundles\entrytyperules;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;

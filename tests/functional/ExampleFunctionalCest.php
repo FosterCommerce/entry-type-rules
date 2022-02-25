@@ -1,6 +1,6 @@
 <?php
 
-namespace fostercommerce\entrytypelocktests\acceptance;
+namespace fostercommerce\entrytyperulestests\acceptance;
 
 use Craft;
 use FunctionalTester;

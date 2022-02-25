@@ -27,7 +27,7 @@ use craft\validators\ArrayValidator;
  * https://craftcms.com/docs/plugins/models
  *
  * @author    Foster Commerce
- * @package   EntryTypeLock
+ * @package   EntryTypeRules
  * @since     1.0.0
  */
 class Settings extends Model

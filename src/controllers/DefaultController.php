@@ -11,7 +11,7 @@
 
 namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytypelock\EntryTypeRules;
+use fostercommerce\entrytyperules\EntryTypeRules;
 
 use Craft;
 use craft\web\Controller;
