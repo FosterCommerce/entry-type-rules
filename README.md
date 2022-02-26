@@ -116,9 +116,9 @@ return [
 ];
 ```
 
-1. In the ``sections`` array you include the section *handles* for each section you want to create rules for its entry types.
+1. In the ``sections`` array you include the section *handles* for each section.
 2. Within those sections you include the entry type *handles* for each entry type you want to create rules for.
-3. Within the entry types you can then include their rules:
+3. Within the entry types you can then include rules for :
     * ``limit`` - A numeric limit for the number of entries of that entry type
     * ``userGroups`` - An array of user group handles to limit who can create new entries of that entry type
 
@@ -127,7 +127,7 @@ return [
 The following is a list of additional features we are working on to incorporate into Entry Type Rules:
 
 * Compatibility with Craft 4
-* Include rules for entry types in structure sections based on parent entries
+* Include rules for entry types in structure sections based on parent entries entry type
 * Include rules for entry types in sections based on different sites/languages in a Craft multi-site setup
 * Provide front end methods and variables to implement entry type rules when new entries are submitted via Craft Entry Forms
 * Extend native Craft user group permissions to include entry type permissions
