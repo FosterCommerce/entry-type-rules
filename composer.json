@@ -8,7 +8,8 @@
         "cms",
         "craftcms",
         "craft-plugin",
-        "entry type lock"
+        "entry type",
+        "rules"
     ],
     "support": {
         "docs": "https://github.com/FosterCommerce/entry-type-rules/blob/main/README.md",
@@ -22,10 +23,9 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0"
+        "craftcms/cms": "^3.7.0"
     },
     "require-dev": {
-      "craftcms/cms": "^3.2.0",
       "codeception/codeception": "^3.0",
       "vlucas/phpdotenv": "^3.0"
     },
