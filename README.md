@@ -1,6 +1,6 @@
 # Entry Type Rules plugin for Craft CMS 3.7.x
 
-![Screenshot](resources/img/plugin-header.png)
+![Screenshot](resources/img/new-plugin-header.png)
 
 A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can include
 entry type entries based on their user group.
