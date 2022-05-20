@@ -30,7 +30,7 @@ class SettingsController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = [];
+    protected array|int|bool $allowAnonymous = [];
 
     /**
      * Handle a request going to our plugin's action URL for saving settings,
@@ -41,7 +41,7 @@ class SettingsController extends Controller
      * @throws NotFoundHttpException
      * @throws MissingComponentException
      */
-    public function actionSaveSettings()
+    public function actionSaveSettings(): null|\yii\web\Response
     {
         // Require posts to this controller action only
         $this->requirePostRequest();
