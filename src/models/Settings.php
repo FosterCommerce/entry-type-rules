@@ -49,7 +49,7 @@ class Settings extends Model
         ]
     ]
      */
-    public array|string $sections = [];
+    public $sections = [];
 
     // Public Methods
     // =========================================================================

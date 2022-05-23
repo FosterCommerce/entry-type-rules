@@ -65,21 +65,21 @@ class EntryTypeRules extends Plugin
      *
      * @var string
      */
-    public string $schemaVersion = '1.0.0';
+    public $schemaVersion = '1.0.0';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
      *
      * @var bool
      */
-    public bool $hasCpSettings = true;
+    public $hasCpSettings = true;
 
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
      *
      * @var bool
      */
-    public bool $hasCpSection = false;
+    public $hasCpSection = false;
 
     // Public Methods
     // =========================================================================
