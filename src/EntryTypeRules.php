@@ -95,7 +95,7 @@ class EntryTypeRules extends Plugin
      * you do not need to load it in your init() method.
      *
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;
@@ -191,7 +191,7 @@ class EntryTypeRules extends Plugin
      * instead of using the general Craft settings HTML method to render the settings page.
      * @inheritdoc
      */
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         $overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
@@ -213,7 +213,7 @@ class EntryTypeRules extends Plugin
      *
      * @return Model|null
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }

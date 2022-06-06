@@ -41,7 +41,7 @@ class SettingsController extends Controller
      * @throws NotFoundHttpException
      * @throws MissingComponentException
      */
-    public function actionSaveSettings()
+    public function actionSaveSettings(): null|\yii\web\Response
     {
         // Require posts to this controller action only
         $this->requirePostRequest();

@@ -47,7 +47,7 @@ class EntryTypeRulesService extends Component
      * @param $sectionId
      * @return mixed
      */
-    public function getLockedEntryTypes($sectionId)
+    public function getLockedEntryTypes($sectionId): mixed
     {
         // We will return an array of locked entry type IDs
         $lockedEntryTypes = [];
@@ -111,7 +111,7 @@ class EntryTypeRulesService extends Component
      * @return array
      * @throws InvalidConfigException
      */
-    public function formatSectionsSettings($formParams)
+    public function formatSectionsSettings($formParams): array
     {
         $sections = [];
 

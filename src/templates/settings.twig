@@ -57,7 +57,7 @@
         value: 'entry-type-rules'})
     }}
 
-    {% for section in sections if section.type != 'single' %}
+    {% for section in sections | filter(section =>  section.type != 'single') %}
 
         {% if not loop.first %}<hr />{% endif %}
 
