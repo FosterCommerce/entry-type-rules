@@ -2,7 +2,7 @@
     "name": "fostercommerce/entry-type-rules",
     "description": "A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can include entry type entries based on their user group.",
     "type": "craft-plugin",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "keywords": [
         "craft",
         "cms",
