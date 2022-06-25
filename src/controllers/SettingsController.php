@@ -30,7 +30,7 @@ class SettingsController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = [];
+    protected array|int|bool $allowAnonymous = [];
 
     /**
      * Handle a request going to our plugin's action URL for saving settings,
