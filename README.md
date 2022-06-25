@@ -126,7 +126,7 @@ return [
 
 The following is a list of additional features we are working on to incorporate into Entry Type Rules:
 
-* Compatibility with Craft 4
+* ~~Compatibility with Craft 4~~ ✅
 * Include rules for entry types in structure sections based on parent entries entry type
 * Include rules for entry types in sections based on different sites/languages in a Craft multi-site setup
 * Provide front end methods and variables to implement entry type rules when new entries are submitted via Craft Entry Forms
