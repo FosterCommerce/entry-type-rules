@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "craftcms/cms": "^5.0"
     },
     "autoload": {
@@ -45,7 +45,7 @@
     },
     "require-dev": {
 		"roave/security-advisories": "dev-latest",
-		"craftcms/generator": "^1",
+		"craftcms/generator": "^2.1",
 		"fostercommerce/rector": "dev-main",
 		"fostercommerce/ecs": "dev-main",
 		"craftcms/phpstan": "dev-main",
