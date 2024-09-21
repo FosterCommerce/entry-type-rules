@@ -2,7 +2,7 @@
     "name": "fostercommerce/entry-type-rules",
     "description": "A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can include entry type entries based on their user group.",
     "type": "craft-plugin",
-    "version": "2.0.3",
+    "version": "3.0.0",
     "keywords": [
         "craft",
         "cms",
@@ -24,11 +24,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "craftcms/cms": "^4.0"
-    },
-    "require-dev": {
-      "codeception/codeception": "^3.0",
-      "vlucas/phpdotenv": "^3.0"
+        "craftcms/cms": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -46,5 +42,27 @@
             "entryTypeRulesService": "fostercommerce\\entrytyperules\\services\\EntryTypeRulesService"
         },
         "class": "fostercommerce\\entrytyperules\\EntryTypeRules"
+    },
+    "require-dev": {
+		"roave/security-advisories": "dev-latest",
+		"craftcms/generator": "^1",
+		"fostercommerce/rector": "dev-main",
+		"fostercommerce/ecs": "dev-main",
+		"craftcms/phpstan": "dev-main",
+		"phpstan/phpstan": "^1.11",
+		"craftcms/rector": "dev-main"
+	},
+	"scripts": {
+		"phpstan": "phpstan --memory-limit=1G",
+		"ecs-check": "ecs check --ansi --memory-limit=1G",
+		"ecs-fix": "ecs check --ansi --fix --memory-limit=1G",
+		"rector": "rector process --config rector.php",
+		"rector-dry-run": "rector process --dry-run --config rector.php"
+	},
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }

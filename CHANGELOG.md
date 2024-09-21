@@ -1,4 +1,6 @@
 # Entry Type Rules Changelog
+# 3.0.0 - 2024-09-21
+- Craft 5 compatability
 # 2.0.1 - 2022-06-06
 - Fixes typing for schema
 # 2.0.0 - 2022-05-20
