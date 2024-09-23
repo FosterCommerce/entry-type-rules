@@ -84,7 +84,7 @@ class EntryTypeRulesService extends Component
 			}
 
 			// Check the users groups against the userGroup setting
-			if (isset($setting['userGroups'])) {
+			if (isset($setting['userGroups']) && is_array($setting['userGroups'])) {
 				$matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
 
 				if (! $matchedGroups && ! $user->getIsAdmin()) {
