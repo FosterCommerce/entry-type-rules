@@ -45,20 +45,43 @@
 			const self = this;
 
 			if (self.sectionId && self.$typeSelector.length) {
-
+			
 				$.ajax({
 					type: "GET",
 					url: "/actions/entry-type-rules/default?sectionId=" + self.sectionId,
 					async: true,
 					dataType: "json"
 				}).done(function (response) {
-
 					if (response.lockedEntryTypes) {
+						// if the currently selected entry type change it to the first non-disabled
+						// const entryTypeInput = document.querySelector('#entryType-input')
+						// response.lockedEntryTypes.forEach( (lockedEntryType) => {
+						// 	if(entryTypeInput.value == lockedEntryType) {
+								
+						// 	}
+						// })
 
-						// Disable the entry types in the select
-						response.lockedEntryTypes.forEach( function (entryType) {
-							self.$typeSelector.find('option').filter('[value=' + entryType + ']').prop('disabled', true);
-						});
+						// Disable the locked entry types in the select
+						self.$typeSelector.on('click', function(ev){
+							const listBoxId = ev.currentTarget.querySelector('button').getAttribute('aria-controls')
+							const listBox = document.getElementById(listBoxId)
+							const buttons = listBox.querySelectorAll('.menu-item');
+							buttons.forEach( (button) => {
+								response.lockedEntryTypes.forEach( (lockedEntryType) => {
+									if(lockedEntryType == button.dataset.value){
+										button.disabled = true
+										button.classList.remove('sel')
+										button.classList.add('disabled')
+									}
+								})
+							})
+							// response.lockedEntryTypes.forEach( function (entryType) {
+							// 	// self.$typeSelector.find('option').filter('[value=' + entryType + ']').prop('disabled', true);
+							// 	b = listBox.find('.menu-item');
+							// 	console.log('button', b)
+							// });
+						})
+						
 
 						// Find out if we are on the new entry (URL param "fresh" is present)
 						const urlParams = new URLSearchParams(window.location.search);
