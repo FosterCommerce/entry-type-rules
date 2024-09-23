@@ -11,10 +11,10 @@
 
 namespace fostercommerce\entrytyperules\models;
 
-use fostercommerce\entrytyperules\EntryTypeRules;
-
 use craft\base\Model;
+
 use craft\validators\ArrayValidator;
+use fostercommerce\entrytyperules\EntryTypeRules;
 
 /**
  * EntryTypeRules Settings Model
@@ -32,42 +32,40 @@ use craft\validators\ArrayValidator;
  */
 class Settings extends Model
 {
-    // Public Properties
-    // =========================================================================
+	// Public Properties
+	// =========================================================================
 
-    /**
-     * @var array|string The section and entry type map of rules to limit entry types
-     *
-     * [
-        'pages' => [
-            'blog' => [
-                'limit' => 1,
-                'userGroups' => [
-                    'siteAdmins'
-                ]
-            ]
-        ]
-    ]
-     */
-    public $sections = [];
+	/**
+	 * @var array|string The section and entry type map of rules to limit entry types
+	 *
+	 * [
+		'pages' => [
+			'blog' => [
+				'limit' => 1,
+				'userGroups' => [
+					'siteAdmins'
+				]
+			]
+		]
+	]
+	 */
+	public $sections = [];
 
-    // Public Methods
-    // =========================================================================
+	// Public Methods
+	// =========================================================================
 
-    /**
-     * Returns the validation rules for attributes.
-     *
-     * Validation rules are used by [[validate()]] to check if attribute values are valid.
-     * Child classes may override this method to declare different validation rules.
-     *
-     * More info: http://www.yiiframework.com/doc-2.0/guide-input-validation.html
-     *
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            [['sections'], ArrayValidator::class]
-        ];
-    }
+	/**
+	 * Returns the validation rules for attributes.
+	 *
+	 * Validation rules are used by [[validate()]] to check if attribute values are valid.
+	 * Child classes may override this method to declare different validation rules.
+	 *
+	 * More info: http://www.yiiframework.com/doc-2.0/guide-input-validation.html
+	 */
+	public function rules(): array
+	{
+		return [
+			[['sections'], ArrayValidator::class],
+		];
+	}
 }

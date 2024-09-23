@@ -11,10 +11,10 @@
 
 namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytyperules\services\EntryTypeRulesService;
-
 use Craft;
+
 use craft\web\Controller;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService;
 
 /**
  * Default Controller
@@ -38,36 +38,32 @@ use craft\web\Controller;
  */
 class DefaultController extends Controller
 {
+	// Protected Properties
+	// =========================================================================
+	protected array|int|bool $allowAnonymous = [];
 
-    // Protected Properties
-    // =========================================================================
-    protected array|int|bool $allowAnonymous = [];
+	// Public Methods
+	// =========================================================================
 
-    // Public Methods
-    // =========================================================================
+	/**
+	 * Handle a request going to our plugin's index action URL,
+	 * e.g.: actions/entry-type-rules/default
+	 */
+	public function actionIndex(): mixed
+	{
+		$result = [
+			'sectionId' => 0,
+			'lockedEntryTypes' => [],
+		];
 
-    /**
-     * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/entry-type-rules/default
-     *
-     * @return mixed
-     */
-    public function actionIndex(): mixed
-    {
-        $result = [
-            'sectionId' => 0,
-            'lockedEntryTypes' => []
-        ];
+		// Get the section ID from a query param we will include in the ajax request
+		$sectionId = Craft::$app->request->getQueryParam('sectionId');
 
-        // Get the section ID from a query param we will include in the ajax request
-        $sectionId = Craft::$app->request->getQueryParam('sectionId');
-
-        if ($sectionId) {
-            $result['sectionId'] = $sectionId;
-            $result['lockedEntryTypes'] = EntryTypeRulesService::instance()->getLockedEntryTypes($sectionId);
-            return json_encode($result);
-        } else {
-            return $result;
-        }
-    }
+		if ($sectionId) {
+			$result['sectionId'] = $sectionId;
+			$result['lockedEntryTypes'] = EntryTypeRulesService::instance()->getLockedEntryTypes($sectionId);
+			return json_encode($result);
+		}
+		return $result;
+	}
 }

@@ -24,27 +24,27 @@
  */
 
 return [
-    'sections' => [
-        /*
-        // Add each section you want to create entry type rules for
-        'pages' => [
-            // Add each entry type in the section you want to create rules for (by limit and/or user group)
-            'contactPage' => [
-                'limit' => 1,
-                'userGroups' => [
-                    'adminGroup1',
-                    'adminGroup2'
-                ]
-            ],
-            'blogLanding' => [
-                'limit' => 1
-            ]
-        ],
-        'blog' => [
-            'pressRelease' => [
-                'userGroups' => ['adminGroup1']
-            ]
-        ]
-        */
-    ]
+	'sections' => [
+		/*
+		// Add each section you want to create entry type rules for
+		'pages' => [
+			// Add each entry type in the section you want to create rules for (by limit and/or user group)
+			'contactPage' => [
+				'limit' => 1,
+				'userGroups' => [
+					'adminGroup1',
+					'adminGroup2'
+				]
+			],
+			'blogLanding' => [
+				'limit' => 1
+			]
+		],
+		'blog' => [
+			'pressRelease' => [
+				'userGroups' => ['adminGroup1']
+			]
+		]
+		*/
+	],
 ];

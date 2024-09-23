@@ -11,61 +11,61 @@
 
 namespace fostercommerce\entrytyperules\controllers;
 
-use fostercommerce\entrytyperules\services\EntryTypeRulesService;
-
 use Craft;
+
 use craft\errors\MissingComponentException;
 use craft\web\Controller;
+use fostercommerce\entrytyperules\services\EntryTypeRulesService;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
 class SettingsController extends Controller
 {
-    // Protected Properties
-    // =========================================================================
-    protected array|int|bool $allowAnonymous = [];
+	// Protected Properties
+	// =========================================================================
+	protected array|int|bool $allowAnonymous = [];
 
-    /**
-     * Handle a request going to our plugin's action URL for saving settings,
-     * e.g.: actions/craft-entry-type-rules/save-settings
-     *
-     * @throws BadRequestHttpException
-     * @throws InvalidConfigException
-     * @throws NotFoundHttpException
-     * @throws MissingComponentException
-     */
-    public function actionSaveSettings(): null|\yii\web\Response
-    {
-        // Require posts to this controller action only
-        $this->requirePostRequest();
+	/**
+	 * Handle a request going to our plugin's action URL for saving settings,
+	 * e.g.: actions/craft-entry-type-rules/save-settings
+	 *
+	 * @throws BadRequestHttpException
+	 * @throws InvalidConfigException
+	 * @throws NotFoundHttpException
+	 * @throws MissingComponentException
+	 */
+	public function actionSaveSettings(): null|\yii\web\Response
+	{
+		// Require posts to this controller action only
+		$this->requirePostRequest();
 
-        // Get the plugin instance to ensure it is installed
-        $pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
-        $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
-        if ($plugin === null) {
-            throw new NotFoundHttpException('Plugin not found');
-        }
+		// Get the plugin instance to ensure it is installed
+		$pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
+		$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
+		if ($plugin === null) {
+			throw new NotFoundHttpException('Plugin not found');
+		}
 
-        // Get the posted form values from the settings page submission and send them to the service to be formatted
-        $request = Craft::$app->getRequest();
-        $formParams = $request->getBodyParams();
-        $settings['sections'] = EntryTypeRulesService::instance()->formatSectionsSettings($formParams);
+		// Get the posted form values from the settings page submission and send them to the service to be formatted
+		$request = Craft::$app->getRequest();
+		$formParams = $request->getBodyParams();
+		$settings['sections'] = EntryTypeRulesService::instance()->formatSectionsSettings($formParams);
 
-        // Save the settings, and if they fail, display an error
-        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
-            Craft::$app->getSession()->setError(Craft::t('app', "Couldn’t save plugin settings."));
+		// Save the settings, and if they fail, display an error
+		if (! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
+			Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));
 
-            // Send the plugin back to the template
-            // Craft::$app->getUrlManager()->setRouteParams([
-            //     'plugin' => $plugin,
-            // ]);
+			// Send the plugin back to the template
+			// Craft::$app->getUrlManager()->setRouteParams([
+			//     'plugin' => $plugin,
+			// ]);
 
-            return null;
-        }
+			return null;
+		}
 
-        // If everything went well, display a confirmation message and send the user back to the same settings page
-        Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
-        return $this->redirectToPostedUrl();
-    }
+		// If everything went well, display a confirmation message and send the user back to the same settings page
+		Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
+		return $this->redirectToPostedUrl();
+	}
 }
