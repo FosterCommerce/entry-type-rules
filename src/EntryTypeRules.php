@@ -93,6 +93,9 @@ class EntryTypeRules extends Plugin
 
 		Craft::setAlias('@plugin', $this->getBasePath());
 
+        Craft::$app->getView()->registerAssetBundle(EntryTypeRulesAsset::class, View::POS_END);
+		Craft::$app->getView()->registerJs('new Craft.EntryTypeRules();', View::POS_READY);
+
 		// Let's put our own data regarding the section into the entry edit page in the CP
 		Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
 			$injectedHtml = '';
