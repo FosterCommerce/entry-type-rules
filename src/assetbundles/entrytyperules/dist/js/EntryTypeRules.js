@@ -31,9 +31,13 @@
 			if (self.namespace) {
 				self.sectionId = $('#' + self.namespace + '-entryTypeRulesSectionId').data('value');
 				self.$typeSelector = $('#' + self.namespace + '-entryType');
+				self.$typeButton = $('#' + self.namespace + '-entryType-button');
+				self.$typeInput = $('#' + self.namespace + '-entryType-input');
 			} else {
 				self.sectionId = $('#entryTypeRulesSectionId').data('value');
 				self.$typeSelector = $('#entryType');
+				self.$typeButton = $('#' + 'entryType-button');
+				self.$typeInput = $('#' + 'entryType-input');
 			}
 
 			// Lock the entry types
@@ -53,15 +57,17 @@
 					dataType: "json"
 				}).done(function (response) {
 					if (response.lockedEntryTypes) {
-						// if the currently selected entry type change it to the first non-disabled
-						// const entryTypeInput = document.querySelector('#entryType-input')
-						// response.lockedEntryTypes.forEach( (lockedEntryType) => {
-						// 	if(entryTypeInput.value == lockedEntryType) {
-								
-						// 	}
-						// })
+						//if the currently selected entry type change it to the first non-disabled
+						response.lockedEntryTypes.forEach( (lockedEntryType) => {
+							if(self.$typeInput.val() == lockedEntryType) {
+								self.$typeButton.find('.label:first').addClass('disabled');
+								// set the button and the hidden input to the first non-disabled entry type
+								// but we don't know what they are until the button is clicked...hmmm
+							}
+						})
 
-						// Disable the locked entry types in the select
+						// Disable the locked entry types in the 'select'
+						// doing this with vanilla JS because I can't get the jQuery selector to work even if I escape the . in the menu's ID.
 						self.$typeSelector.on('click', function(ev){
 							const listBoxId = ev.currentTarget.querySelector('button').getAttribute('aria-controls')
 							const listBox = document.getElementById(listBoxId)
@@ -75,11 +81,6 @@
 									}
 								})
 							})
-							// response.lockedEntryTypes.forEach( function (entryType) {
-							// 	// self.$typeSelector.find('option').filter('[value=' + entryType + ']').prop('disabled', true);
-							// 	b = listBox.find('.menu-item');
-							// 	console.log('button', b)
-							// });
 						})
 						
 
