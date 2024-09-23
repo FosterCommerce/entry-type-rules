@@ -27,7 +27,7 @@ return [
 	'{name} plugin loaded' => '{name} plugin loaded',
 	'Settings' => 'Settings',
 	'Warning' => 'Warning',
-	'The Entry Type Rules plugin settings are being overridden in the \'config/entry-type-rules.php\' file.' => 'The Entry Type Rules plugin settings are being overridden in the \'config/entry-type-rules.php\' file.',
+	"The Entry Type Rules plugin settings are being overridden in the 'config/entry-type-rules.php' file." => "The Entry Type Rules plugin settings are being overridden in the 'config/entry-type-rules.php' file.",
 	'Section' => 'Section',
 	'Entry Type' => 'Entry Type',
 	'The entry type and its current total entry count.' => 'The entry type and its current total entry count.',

@@ -93,17 +93,18 @@ class EntryTypeRules extends Plugin
 
 		Craft::setAlias('@plugin', $this->getBasePath());
 
-        Craft::$app->getView()->registerAssetBundle(EntryTypeRulesAsset::class, View::POS_END);
+		Craft::$app->getView()->registerAssetBundle(EntryTypeRulesAsset::class, View::POS_END);
 		Craft::$app->getView()->registerJs('new Craft.EntryTypeRules();', View::POS_READY);
 
 		// Let's put our own data regarding the section into the entry edit page in the CP
-		Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context) {
+		Craft::$app->view->hook('cp.entries.edit.meta', function (array &$context): string {
 			$injectedHtml = '';
 			$entry = $context['entry'];
 			if ($entry !== null && $entry->section->type !== 'single') {
 				// Create the elements we are going to inject
 				$injectedHtml = '<div id="entryTypeRulesSectionId" data-value="' . $entry->section->id . '"></div>';
 			}
+
 			return $injectedHtml;
 		});
 
@@ -111,7 +112,7 @@ class EntryTypeRules extends Plugin
 		Event::on(
 			View::class,
 			View::EVENT_AFTER_RENDER_TEMPLATE,
-			function () {
+			function (): void {
 				// Check the segments to see if we are in an entry edit form, if so register the entry bundle
 				if (
 					Craft::$app->getRequest()->isCpRequest &&
@@ -129,7 +130,7 @@ class EntryTypeRules extends Plugin
 		Event::on(
 			Element::class,
 			Element::EVENT_DEFINE_SIDEBAR_HTML,
-			function (DefineHtmlEvent $event) {
+			function (DefineHtmlEvent $event): void {
 				$element = $event->sender;
 				// If the element is a Craft Entry
 				if (is_a($element, 'craft\elements\Entry')) {
@@ -190,8 +191,8 @@ class EntryTypeRules extends Plugin
 	{
 		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
-        /** @var \craft\web\Controller $controller */
-        $controller = Craft::$app->controller;
+		/** @var \craft\web\Controller $controller */
+		$controller = Craft::$app->controller;
 		return $controller->renderTemplate(
 			'entry-type-rules/settings',
 			[

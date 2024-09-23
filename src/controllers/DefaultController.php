@@ -64,6 +64,7 @@ class DefaultController extends Controller
 			$result['lockedEntryTypes'] = EntryTypeRulesService::instance()->getLockedEntryTypes($sectionId);
 			return json_encode($result);
 		}
+
 		return $result;
 	}
 }

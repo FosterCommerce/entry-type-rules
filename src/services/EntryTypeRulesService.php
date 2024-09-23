@@ -55,22 +55,22 @@ class EntryTypeRulesService extends Component
 		// Get all the entry types for this section into an array
 		$sectionEntryTypes = Craft::$app->getEntries()->getEntryTypesBySectionId($sectionId);
 		$entryTypesIdsMap = [];
-		foreach ($sectionEntryTypes as $entryType) {
-			$entryTypesIdsMap[$entryType->handle] = (int) $entryType->id;
+		foreach ($sectionEntryTypes as $sectionEntryType) {
+			$entryTypesIdsMap[$sectionEntryType->handle] = (int) $sectionEntryType->id;
 		}
 
 		// Get the section handle we are dealing with
 		$sectionHandle = Craft::$app->getEntries()->getSectionById($sectionId)->handle;
 
 		// Get the settings for this section
-		$lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
+		$lockedTypesSettings = $settings['sections'][$sectionHandle] ?? [];
 
 		// Get the current user groups
 		$user = Craft::$app->getUser();
 		$userGroups = $user->getIdentity()->getGroups();
 		$userGroupArray = [];
-		foreach ($userGroups as $group) {
-			array_push($userGroupArray, $group->handle);
+		foreach ($userGroups as $userGroup) {
+			$userGroupArray[] = $userGroup->handle;
 		}
 
 		// Loop through the locked entry type settings
@@ -79,17 +79,17 @@ class EntryTypeRulesService extends Component
 			if (isset($setting['limit'])) {
 				$entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
 				if ($entryCount >= $setting['limit']) {
-					array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
-				}
+        $lockedEntryTypes[] = $entryTypesIdsMap[$typeHandle];
+    }
 			}
 
 			// Check the users groups against the userGroup setting
 			if (isset($setting['userGroups']) && is_array($setting['userGroups'])) {
 				$matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
 
-				if (! $matchedGroups && ! $user->getIsAdmin()) {
-					array_push($lockedEntryTypes, $entryTypesIdsMap[$typeHandle]);
-				}
+				if ($matchedGroups === [] && ! $user->getIsAdmin()) {
+        $lockedEntryTypes[] = $entryTypesIdsMap[$typeHandle];
+    }
 			}
 		}
 
@@ -106,7 +106,7 @@ class EntryTypeRulesService extends Component
 	 *
 	 * @throws InvalidConfigException
 	 */
-	public function formatSectionsSettings($formParams): array
+	public function formatSectionsSettings(array $formParams): array
 	{
 		// $sections = [];
 
