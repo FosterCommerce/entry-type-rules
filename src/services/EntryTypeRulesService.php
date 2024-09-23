@@ -56,14 +56,14 @@ class EntryTypeRulesService extends Component
         $settings = EntryTypeRules::$plugin->getSettings();
 
         // Get all the entry types for this section into an array
-        $sectionEntryTypes = Craft::$app->sections->getEntryTypesBySectionId($sectionId);
+        $sectionEntryTypes = Craft::$app->getEntries()->getEntryTypesBySectionId($sectionId);
         $entryTypesIdsMap = [];
         foreach ($sectionEntryTypes as $entryType) {
             $entryTypesIdsMap[$entryType->handle] = (int) $entryType->id;
         }
 
         // Get the section handle we are dealing with
-        $sectionHandle = Craft::$app->sections->getSectionById($sectionId)->handle;
+        $sectionHandle = Craft::$app->getEntries()->getSectionById($sectionId)->handle;
 
         // Get the settings for this section
         $lockedTypesSettings = isset($settings['sections'][$sectionHandle]) ? $settings['sections'][$sectionHandle] : [];
@@ -113,19 +113,19 @@ class EntryTypeRulesService extends Component
      */
     public function formatSectionsSettings($formParams): array
     {
-        $sections = [];
+        // $sections = [];
+        
+        // foreach ($formParams as $key => $value) {
+        //     if (str_contains($key, 'entryType_') and ($value !== '' and $value !== '0')) {
+        //         preg_match('/entryType_([0-9]+)_/', $key, $m);
+        //         $entryType = Craft::$app->getEntries()->getEntryTypeById((int)$m[1]);
+        //         $section = $entryType->getSection();
+        //         $paramParts = explode('_', $key);
+        //         $param = end($paramParts);
+        //         $sections[$section->handle][$entryType->handle][$param] = (is_numeric($value) ? (int) $value : $value);
+        //     }
+        // }
 
-        foreach ($formParams as $key => $value) {
-            if (str_contains($key, 'entryType_') and ($value !== '' and $value !== '0')) {
-                preg_match('/entryType_([0-9]+)_/', $key, $m);
-                $entryType = Craft::$app->sections->getEntryTypeById($m[1]);
-                $section = $entryType->getSection();
-                $paramParts = explode('_', $key);
-                $param = end($paramParts);
-                $sections[$section->handle][$entryType->handle][$param] = (is_numeric($value) ? (int) $value : $value);
-            }
-        }
-
-        return $sections;
+        return $formParams['sections'];
     }
 }

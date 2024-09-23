@@ -29,7 +29,7 @@
 
 {% set configOverride = overrides.sections is defined %}
 
-{% set sections = craft.app.sections.allSections %}
+{% set sections = craft.app.entries.getAllSections() %}
 
 {% set groupOptions = [] %}
 {% for group in craft.app.userGroups.allGroups %}
@@ -98,7 +98,7 @@
                         {% set limitValue = settings.sections[section.handle][entryType.handle].limit|default('') %}
                         <tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
                             <td>
-                                <strong>{{ entryType.name }}</strong><br/>
+                                <strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
                                 <span class="entryTypeRulesLimit__count inline-block">
                                     {{ "Entries"|t('entry-type-rules') }}: {{ entryTypeCount }}
                                 </span>
@@ -110,8 +110,8 @@
                             <td>
                                 <div class="entryTypeRulesLimit__input">
                                     {{ forms.textField({
-                                        id: ('entryType_' ~ entryType.id ~ '_limit'),
-                                        name: ('entryType_' ~ entryType.id ~ '_limit'),
+                                        id: (entryType.handle ~ '_limit'),
+                                        name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
                                         type: 'number',
                                         size: 5,
                                         min: 0,
@@ -123,8 +123,8 @@
                             </td>
                             <td>
                                 {{ forms.checkboxSelectField({
-                                    id: ('entryType_' ~ entryType.id ~ '_userGroups'),
-                                    name: ('entryType_' ~ entryType.id ~ '_userGroups'),
+                                    id: (entryType.handle ~ '_userGroups'),
+                                    name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
                                     options: groupOptions,
                                     showAllOption: true,
                                     allValue: '',

@@ -24,12 +24,6 @@ class SettingsController extends Controller
 {
     // Protected Properties
     // =========================================================================
-
-    /**
-     * @var    bool|array Allows anonymous access to this controller's actions.
-     *         The actions must be in 'kebab-case'
-     * @access protected
-     */
     protected array|int|bool $allowAnonymous = [];
 
     /**
@@ -63,9 +57,9 @@ class SettingsController extends Controller
             Craft::$app->getSession()->setError(Craft::t('app', "Couldn’t save plugin settings."));
 
             // Send the plugin back to the template
-            Craft::$app->getUrlManager()->setRouteParams([
-                'plugin' => $plugin,
-            ]);
+            // Craft::$app->getUrlManager()->setRouteParams([
+            //     'plugin' => $plugin,
+            // ]);
 
             return null;
         }
