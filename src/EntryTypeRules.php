@@ -187,7 +187,9 @@ class EntryTypeRules extends Plugin
 	{
 		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
-		return Craft::$app->controller->renderTemplate(
+        /** @var \craft\web\Controller $controller */
+        $controller = Craft::$app->controller;
+		return $controller->renderTemplate(
 			'entry-type-rules/settings',
 			[
 				'settings' => $this->getSettings(),
