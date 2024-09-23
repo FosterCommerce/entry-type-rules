@@ -57,7 +57,15 @@
 					dataType: "json"
 				}).done(function (response) {
 					if (response.lockedEntryTypes) {
-					
+						
+						// if the selected item is locked then 
+						if(jQuery.inArray(self.$typeSelector.data().value, response.lockedEntryTypes) !== -1) {
+							self.$typeButton.disable()
+							// change the value to the next option
+							self.$typeButton.showMenu();
+						}
+
+						// disable any locked items in the menu
 						jQuery(self.$typeButton.menu.$options).each( ($option) => {
 							if(jQuery.inArray(jQuery(self.$typeButton.menu.$options[$option]).data().value, response.lockedEntryTypes) !== -1) {
 								jQuery(self.$typeButton.menu.$options[$option]).disabled = true
