@@ -7,9 +7,8 @@ use Craft;
 use craft\errors\MissingComponentException;
 use craft\web\Controller;
 use craft\web\Request;
-use fostercommerce\entrytyperules\EntryTypeRules;
 use fostercommerce\entrytyperules\models\Settings;
-use fostercommerce\shipstationconnect\Plugin;
+use fostercommerce\entrytyperules\Plugin;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use yii\web\MethodNotAllowedHttpException;
@@ -35,8 +34,8 @@ class SettingsController extends Controller
 		/** @var Request $request */
 		$request = Craft::$app->getRequest();
 
-		/** @var EntryTypeRules $plugin */
-		$plugin = EntryTypeRules::getInstance();
+		/** @var Plugin $plugin */
+		$plugin = Plugin::getInstance();
 
 		$settings = new Settings([
 			'sections' => $request->getBodyParam('sections'),

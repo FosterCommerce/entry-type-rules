@@ -6,22 +6,23 @@ use Craft;
 use craft\base\Element;
 use craft\base\Model;
 
-use craft\base\Plugin;
+use craft\base\Plugin as BasePlugin;
 use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
+use craft\web\Controller;
 use craft\web\View;
 use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
 use fostercommerce\entrytyperules\models\Settings;
-use fostercommerce\entrytyperules\services\EntryTypeRulesService as EntryTypeRulesServiceService;
+use fostercommerce\entrytyperules\services\Service;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 
 /**
- * @property  EntryTypeRulesServiceService $entryTypeRulesService
+ * @property  Service $service
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
-class EntryTypeRules extends Plugin
+class Plugin extends BasePlugin
 {
 	public bool $hasCpSettings = true;
 
@@ -32,8 +33,10 @@ class EntryTypeRules extends Plugin
 	{
 		parent::init();
 
-		Craft::setAlias('@plugin', $this->getBasePath());
-		//
+		$this->setComponents([
+			'service' => Service::class,
+		]);
+
 		Event::on(
 			Element::class,
 			Element::EVENT_DEFINE_SIDEBAR_HTML,
@@ -57,48 +60,13 @@ class EntryTypeRules extends Plugin
 				}
 			}
 		);
-
-		/**
-		 * Logging in Craft involves using one of the following methods:
-		 *
-		 * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
-		 * Craft::info(): record a message that conveys some useful information.
-		 * Craft::warning(): record a warning message that indicates something unexpected has happened.
-		 * Craft::error(): record a fatal error that should be investigated as soon as possible.
-		 *
-		 * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
-		 *
-		 * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
-		 * the category to the method (prefixed with the fully qualified class name) where the constant appears.
-		 *
-		 * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
-		 * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
-		 *
-		 * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
-		 */
-		Craft::info(
-			Craft::t(
-				'entry-type-rules',
-				'{name} plugin loaded',
-				[
-					'name' => $this->name,
-				]
-			),
-			__METHOD__
-		);
 	}
 
-	/**
-	 * Intercepts the plugin settings page response so we can check the config override file
-	 * (if it exists) and so we can process the Post response in our own settings controller method
-	 * instead of using the general Craft settings HTML method to render the settings page.
-	 * @inheritdoc
-	 */
 	public function getSettingsResponse(): mixed
 	{
 		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
-		/** @var \craft\web\Controller $controller */
+		/** @var Controller $controller */
 		$controller = Craft::$app->controller;
 		return $controller->renderTemplate(
 			'entry-type-rules/settings',

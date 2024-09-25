@@ -7,10 +7,10 @@ use Craft;
 use craft\base\Component;
 use craft\elements\Entry;
 use craft\web\User;
-use fostercommerce\entrytyperules\EntryTypeRules;
 use fostercommerce\entrytyperules\models\Settings;
+use fostercommerce\entrytyperules\Plugin;
 
-class EntryTypeRulesService extends Component
+class Service extends Component
 {
 	/**
 	 * @return array<int, int>
@@ -23,7 +23,7 @@ class EntryTypeRulesService extends Component
 
 		// Get the plugins settings
 		/** @var Settings $settings */
-		$settings = EntryTypeRules::getInstance()?->getSettings();
+		$settings = Plugin::getInstance()?->getSettings();
 
 		// Get all the entry types for this section into an array
 		$sectionEntryTypes = Craft::$app->getEntries()->getEntryTypesBySectionId($sectionId);

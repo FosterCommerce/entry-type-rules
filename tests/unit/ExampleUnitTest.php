@@ -14,7 +14,7 @@ namespace fostercommerce\entrytyperulestests\unit;
 use Codeception\Test\Unit;
 use UnitTester;
 use Craft;
-use fostercommerce\entrytyperules\EntryTypeRules;
+use fostercommerce\entrytyperules\Plugin;
 
 /**
  * ExampleUnitTest
@@ -46,8 +46,8 @@ class ExampleUnitTest extends Unit
     public function testPluginInstance()
     {
         $this->assertInstanceOf(
-            EntryTypeRules::class,
-            EntryTypeRules::$plugin
+            Plugin::class,
+            Plugin::$plugin
         );
     }
 

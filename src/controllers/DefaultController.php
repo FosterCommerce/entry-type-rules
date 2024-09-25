@@ -17,7 +17,7 @@ use craft\elements\Entry;
 use craft\web\Application;
 use craft\web\Controller;
 use craft\web\User;
-use fostercommerce\entrytyperules\EntryTypeRules;
+use fostercommerce\entrytyperules\Plugin;
 
 /**
  * Default Controller
@@ -75,8 +75,8 @@ class DefaultController extends Controller
 			/** @var User $user */
 			$user = Craft::$app->getUser();
 
-			$result['lockedEntryTypes'] = EntryTypeRules::getInstance()
-				?->entryTypeRulesService
+			$result['lockedEntryTypes'] = Plugin::getInstance()
+				?->service
 				->getLockedEntryTypes($sectionId, $user);
 		}
 
