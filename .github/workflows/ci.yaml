@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - develop-craft5
   pull_request:
 
 jobs:
