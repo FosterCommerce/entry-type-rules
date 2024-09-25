@@ -13,8 +13,11 @@ namespace fostercommerce\entrytyperules\controllers;
 
 use Craft;
 
+use craft\elements\Entry;
+use craft\web\Application;
 use craft\web\Controller;
-use fostercommerce\entrytyperules\services\EntryTypeRulesService;
+use craft\web\User;
+use fostercommerce\entrytyperules\EntryTypeRules;
 
 /**
  * Default Controller
@@ -48,23 +51,35 @@ class DefaultController extends Controller
 	/**
 	 * Handle a request going to our plugin's index action URL,
 	 * e.g.: actions/entry-type-rules/default
+	 *
+	 * @throws \Throwable
 	 */
 	public function actionIndex(): mixed
 	{
+		/** @var Application $app */
+		$app = Craft::$app;
+		// Get the section ID from a query param we will include in the ajax request
+		/** @var int $sectionId */
+		$sectionId = $app->request->getQueryParam('sectionId');
+		$entryId = $app->request->getQueryParam('entryId');
+
 		$result = [
 			'sectionId' => 0,
 			'lockedEntryTypes' => [],
+			'entryExists' => Entry::find()->id($entryId)->exists(),
 		];
-
-		// Get the section ID from a query param we will include in the ajax request
-		$sectionId = Craft::$app->request->getQueryParam('sectionId');
 
 		if ($sectionId) {
 			$result['sectionId'] = $sectionId;
-			$result['lockedEntryTypes'] = EntryTypeRulesService::instance()->getLockedEntryTypes($sectionId);
-			return json_encode($result);
+
+			/** @var User $user */
+			$user = Craft::$app->getUser();
+
+			$result['lockedEntryTypes'] = EntryTypeRules::getInstance()
+				?->entryTypeRulesService
+				->getLockedEntryTypes($sectionId, $user);
 		}
 
-		return $result;
+		return $this->asJson($result);
 	}
 }

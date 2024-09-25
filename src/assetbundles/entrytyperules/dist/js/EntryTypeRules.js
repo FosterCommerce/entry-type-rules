@@ -3,6 +3,8 @@ Craft.EntryTypeRules = Garnish.Base.extend({
 	sectionId: null,
 	selectedType: null,
 	typeButton: null,
+	createButton: null,
+	elementId: false,
 
 	init: function(namespace) {
 		const self = this;
@@ -12,15 +14,22 @@ Craft.EntryTypeRules = Garnish.Base.extend({
 
 		// If we have a namespace it means we are in a HUD or Craft Slide-out, if not we are in a regular entry edit page
 		if (self.namespace) {
-			self.sectionId = document.getElementById(self.namespace + '-entryTypeRulesSectionId')?.dataset?.value;
+			let sectionIdElement = document.getElementById(self.namespace + '-entryTypeRulesSectionId');
+			self.sectionId = sectionIdElement?.value;
 			self.selectedType = document.getElementById(self.namespace + '-entryType-input');
 			self.typeButton = jQuery('#' + self.namespace + '-entryType-button').data('menubtn');
+			self.elementId = document.getElementsByName(self.namespace + '[elementId]')[0]?.value;
+			self.createButton = sectionIdElement?.closest('form').querySelector('button[type="submit"]');
 		} else {
-			self.sectionId = document.getElementById('entryTypeRulesSectionId')?.dataset?.value;
+			let sectionIdElement = document.getElementById('entryTypeRulesSectionId');
+			self.sectionId = sectionIdElement?.value;
 			self.selectedType = document.getElementById('entryType-input');
 			self.typeButton = jQuery('#entryType-button').data('menubtn');
+			self.createButton = sectionIdElement?.closest('form').querySelector('button[type="submit"]')?.parentElement;
+			self.elementId = document.getElementsByName('elementId')[0]?.value;
 		}
 
+		// sectionId will be null if we are not editing an entry
 		if (self.sectionId === null || self.selectedType === null) {
 			return;
 		}
@@ -33,7 +42,9 @@ Craft.EntryTypeRules = Garnish.Base.extend({
 	lockEntryTypes: function() {
 		const self = this;
 
-		fetch("/actions/entry-type-rules/default?sectionId=" + parseInt(self.sectionId, 10))
+		let sectionId = parseInt(self.sectionId, 10);
+		let elementId = parseInt(self.elementId, 10);
+		fetch(`/actions/entry-type-rules/default?entryId=${elementId}&sectionId=${sectionId}`)
 			.then(response => response.json())
 			.then(response => {
 				if (!response.lockedEntryTypes) {
@@ -58,9 +69,9 @@ Craft.EntryTypeRules = Garnish.Base.extend({
 
 				// Find out if we are on the new entry (URL param "fresh" is present)
 				const urlParams = new URLSearchParams(window.location.search);
-				const canChangeSelection = !self.namespace && urlParams.has('fresh');
 
-				if (canChangeSelection) {
+				// We only want to prevent folks from changing the type if the entry is new
+				if (! response.entryExists) {
 					// If there is an available option
 					if (firstEnabledOption !== null) {
 						// And if the currently selected type is locked
@@ -70,8 +81,9 @@ Craft.EntryTypeRules = Garnish.Base.extend({
 							self.typeButton.onOptionSelect(firstEnabledOption);
 						}
 					} else {
-						// TODO we need to disable saving at this point because the user cannot select a type.
 						self.typeButton.disable();
+						self.createButton.disabled = true;
+						self.createButton.classList.add('disabled');
 					}
 				}
 			});

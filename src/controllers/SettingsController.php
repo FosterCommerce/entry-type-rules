@@ -1,13 +1,4 @@
 <?php
-/**
- * Entry Type Rules plugin for Craft CMS 3.x
- *
- * A Craft plugin that allows you to set rules on number of entry types in a Craft section and/or limit who can
- * include entry type entries based on their user group.
- *
- * @link      https://fostercommerce.com
- * @copyright Copyright (c) 2022 Foster Commerce
- */
 
 namespace fostercommerce\entrytyperules\controllers;
 
@@ -15,15 +6,17 @@ use Craft;
 
 use craft\errors\MissingComponentException;
 use craft\web\Controller;
-use fostercommerce\entrytyperules\services\EntryTypeRulesService;
+use craft\web\Request;
+use fostercommerce\entrytyperules\EntryTypeRules;
+use fostercommerce\entrytyperules\models\Settings;
+use fostercommerce\shipstationconnect\Plugin;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
+use yii\web\MethodNotAllowedHttpException;
+use yii\web\Response;
 
 class SettingsController extends Controller
 {
-	// Protected Properties
-	// =========================================================================
 	protected array|int|bool $allowAnonymous = [];
 
 	/**
@@ -32,40 +25,29 @@ class SettingsController extends Controller
 	 *
 	 * @throws BadRequestHttpException
 	 * @throws InvalidConfigException
-	 * @throws NotFoundHttpException
 	 * @throws MissingComponentException
+	 * @throws MethodNotAllowedHttpException
 	 */
-	public function actionSaveSettings(): null|\yii\web\Response
+	public function actionSaveSettings(): Response
 	{
-		// Require posts to this controller action only
 		$this->requirePostRequest();
 
-		// Get the plugin instance to ensure it is installed
-		$pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
-		$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
-		if ($plugin === null) {
-			throw new NotFoundHttpException('Plugin not found');
-		}
-
-		// Get the posted form values from the settings page submission and send them to the service to be formatted
+		/** @var Request $request */
 		$request = Craft::$app->getRequest();
-		$formParams = $request->getBodyParams();
-		$settings['sections'] = EntryTypeRulesService::instance()->formatSectionsSettings($formParams);
 
-		// Save the settings, and if they fail, display an error
-		if (! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
+		/** @var EntryTypeRules $plugin */
+		$plugin = EntryTypeRules::getInstance();
+
+		$settings = new Settings([
+			'sections' => $request->getBodyParam('sections'),
+		]);
+
+		if (! $settings->validate() || ! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray())) {
 			Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));
-
-			// Send the plugin back to the template
-			// Craft::$app->getUrlManager()->setRouteParams([
-			//     'plugin' => $plugin,
-			// ]);
-
-			return null;
+		} else {
+			Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
 		}
 
-		// If everything went well, display a confirmation message and send the user back to the same settings page
-		Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
 		return $this->redirectToPostedUrl();
 	}
 }
