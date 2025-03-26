@@ -1,5 +1,9 @@
 # Entry Type Rules Changelog
 
+# 3.0.1 - 2025-03-26
+
+- Update branding
+
 # 3.0.0 - 2024-09-25
 
 - Craft 5 compatability

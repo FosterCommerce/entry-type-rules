@@ -1,4 +1,4 @@
-![Screenshot](resources/img/new-plugin-header.png)
+![Screenshot](resources/img/entry-type-rules-header.png)
 
 # Entry Type Rules plugin for Craft CMS 5
 
