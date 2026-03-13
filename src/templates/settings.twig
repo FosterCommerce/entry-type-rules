@@ -41,9 +41,13 @@
 
 {% block content %}
 	{% if sections is empty %}
-		<p>{{ 'configureSections'|t('entry-type-rules')|raw }}</p>
+		<div class="zilch">
+			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : siteUrl ~ craft.app.config.general.cpTrigger ~ '/settings/sections'})|raw }}</p>
+		</div>
 	{% elseif not craft.entries.count() %}
-		<p>{{ 'configureEntries'|t('entry-type-rules')|raw }}</p>
+		<div class="zilch">
+			<p>{{ 'configureEntries'|t('entry-type-rules', {'url' : siteUrl ~ craft.app.config.general.cpTrigger ~ '/entries'})|raw }}</p>
+		</div>
 	{% else %}
 
 		{% if configOverride %}
