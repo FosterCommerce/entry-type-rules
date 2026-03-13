@@ -38,4 +38,6 @@ return [
 	'Limit which user groups can add new entries for the entry type.' => 'Limit which user groups can add new entries for the entry type.',
 	'Admin users will always be able to add new entries.' => 'Admin users will always be able to add new entries.',
 	'Entries' => 'Entries',
+	'configureSections' => 'You need to <a href="/admin/settings/sections">configure some Sections</a> first.',
+	'configureEntries' => 'You need to create some entries first.</p>',
 ];
