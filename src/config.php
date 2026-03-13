@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Entry Type Rules plugin for Craft CMS 3.x
  *
