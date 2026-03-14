@@ -15,7 +15,6 @@ namespace fostercommerce\entrytyperules\controllers;
 use Craft;
 
 use craft\elements\Entry;
-use craft\helpers\UrlHelper;
 use craft\web\Application;
 use craft\web\Controller;
 use craft\web\User;
