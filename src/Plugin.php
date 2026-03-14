@@ -9,6 +9,7 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
+use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\View;
 use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
@@ -73,6 +74,8 @@ class Plugin extends BasePlugin
 			[
 				'settings' => $this->getSettings(),
 				'overrides' => $overrides,
+				'sectionsUrl' => UrlHelper::cpUrl('settings/sections'),
+				'entriesUrl' => UrlHelper::cpUrl('entries'),
 			]
 		);
 	}

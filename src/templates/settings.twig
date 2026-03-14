@@ -42,11 +42,11 @@
 {% block content %}
 	{% if sections is empty %}
 		<div class="zilch">
-			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : siteUrl ~ craft.app.config.general.cpTrigger ~ '/settings/sections'})|raw }}</p>
+			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : sectionsUrl })|raw }}</p>
 		</div>
 	{% elseif not craft.entries.count() %}
 		<div class="zilch">
-			<p>{{ 'configureEntries'|t('entry-type-rules', {'url' : siteUrl ~ craft.app.config.general.cpTrigger ~ '/entries'})|raw }}</p>
+			<p>{{ 'configureEntries'|t('entry-type-rules', {'url' : entriesUrl })|raw }}</p>
 		</div>
 	{% else %}
 
