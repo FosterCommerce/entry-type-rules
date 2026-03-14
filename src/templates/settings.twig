@@ -40,104 +40,114 @@
 {% endfor %}
 
 {% block content %}
+	{% if sections is empty %}
+		<div class="zilch">
+			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : sectionsUrl })|raw }}</p>
+		</div>
+	{% elseif not craft.entries.count() %}
+		<div class="zilch">
+			<p>{{ 'configureEntries'|t('entry-type-rules', {'url' : entriesUrl })|raw }}</p>
+		</div>
+	{% else %}
 
-    {% if configOverride %}
-        <p class="first warning">
-            <span class="icon" aria-hidden="true"></span>
-            <span class="visually-hidden">{{ "Warning"|t('entry-type-rules') }}: </span>
-            {{ "The Entry Type Rules plugin settings are being overridden in the 'config/entry-type-rules.php' file."|t('entry-type-rules') }}
-        </p>
-        <hr />
-    {% endif %}
+		{% if configOverride %}
+			<p class="first warning">
+				<span class="icon" aria-hidden="true"></span>
+				<span class="visually-hidden">{{ "Warning"|t('entry-type-rules') }}: </span>
+				{{ "The Entry Type Rules plugin settings are being overridden in the 'config/entry-type-rules.php' file."|t('entry-type-rules') }}
+			</p>
+			<hr />
+		{% endif %}
 
-    {{ actionInput('entry-type-rules/settings/save-settings') }}
+		{{ actionInput('entry-type-rules/settings/save-settings') }}
 
-    {{ forms.hidden({
-        name: 'pluginHandle',
-        value: 'entry-type-rules'})
-    }}
+		{{ forms.hidden({
+			name: 'pluginHandle',
+			value: 'entry-type-rules'})
+		}}
 
-    {% for section in sections | filter(section =>  section.type != 'single') %}
+		{% for section in sections | filter(section =>  section.type != 'single') %}
 
-        {% if not loop.first %}<hr />{% endif %}
+			{% if not loop.first %}<hr />{% endif %}
 
-        <section>
-            <h2 class="text-xl">{{ section.name ~ ' ' ~ section.type|capitalize ~ ' ' ~ "Section"|t('entry-type-rules') }}</h2>
-            <table class="data fullwidth collapsible">
-                <thead>
-                    <tr>
-                        <th>
-                            <span class="nowrap">
-                                {{ "Entry Type"|t('entry-type-rules') }}
-                                <span class="info">{{ "The entry type and its current total entry count."|t('entry-type-rules') }}</span>
-                            </span>
-                        </th>
-                        <th>
-                            <span class="nowrap">
-                                {{ "Limit"|t('entry-type-rules') }}
-                                <span class="info">
-                                    {{ "Limit the number of entries for the entry type."|t('entry-type-rules') }}<br />
-                                    <em>{{ "Leave blank or set to zero to remove limits for the entry type."|t('entry-type-rules') }}</em>
-                                </span>
-                            </span>
-                        </th>
-                        <th>
-                            <span class="nowrap">
-                                {{ "User Groups"|t('entry-type-rules') }}
-                                <span class="info">
-                                    {{ "Limit which user groups can add new entries for the entry type."|t('entry-type-rules') }}<br />
-                                    <em>{{ "Admin users will always be able to add new entries."|t('entry-type-rules') }}</em>
-                                </span>
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entryType in section.entryTypes %}
-                        {% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
-                        {% set limitValue = settings.sections[section.handle][entryType.handle].limit|default('') %}
-                        <tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
-                            <td>
-                                <strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
-                                <span class="entryTypeRulesLimit__count inline-block">
-                                    {{ "Entries"|t('entry-type-rules') }}: {{ entryTypeCount }}
-                                </span>
-                                <span class="entryTypeRulesLimit__warning inline-block ml-2 warning hidden" style="margin-top: -3px; margin-left: 5px;">
-                                    <span class="icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">{{ "Warning"|t('entry-type-rules') }}: </span>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="entryTypeRulesLimit__input">
-                                    {{ forms.textField({
-                                        id: (entryType.handle ~ '_limit'),
-                                        name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
-                                        type: 'number',
-                                        size: 5,
-                                        min: 0,
-                                        value: limitValue,
-                                        placeholder: '0',
-                                        unit: "Entries"|t('entry-type-rules'),
-                                    }) }}
-                                </div>
-                            </td>
-                            <td>
-                                {{ forms.checkboxSelectField({
-                                    id: (entryType.handle ~ '_userGroups'),
-                                    name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
-                                    options: groupOptions,
-                                    showAllOption: true,
-                                    allValue: '',
-                                    values: settings.sections[section.handle][entryType.handle].userGroups|default('')
-                                }) }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
+			<section>
+				<h2 class="text-xl">{{ section.name ~ ' ' ~ section.type|capitalize ~ ' ' ~ "Section"|t('entry-type-rules') }}</h2>
+				<table class="data fullwidth collapsible">
+					<thead>
+						<tr>
+							<th>
+								<span class="nowrap">
+									{{ "Entry Type"|t('entry-type-rules') }}
+									<span class="info">{{ "The entry type and its current total entry count."|t('entry-type-rules') }}</span>
+								</span>
+							</th>
+							<th>
+								<span class="nowrap">
+									{{ "Limit"|t('entry-type-rules') }}
+									<span class="info">
+										{{ "Limit the number of entries for the entry type."|t('entry-type-rules') }}<br />
+										<em>{{ "Leave blank or set to zero to remove limits for the entry type."|t('entry-type-rules') }}</em>
+									</span>
+								</span>
+							</th>
+							<th>
+								<span class="nowrap">
+									{{ "User Groups"|t('entry-type-rules') }}
+									<span class="info">
+										{{ "Limit which user groups can add new entries for the entry type."|t('entry-type-rules') }}<br />
+										<em>{{ "Admin users will always be able to add new entries."|t('entry-type-rules') }}</em>
+									</span>
+								</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for entryType in section.entryTypes %}
+							{% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
+							{% set limitValue = settings.sections[section.handle][entryType.handle].limit|default('') %}
+							<tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
+								<td>
+									<strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
+									<span class="entryTypeRulesLimit__count inline-block">
+										{{ "Entries"|t('entry-type-rules') }}: {{ entryTypeCount }}
+									</span>
+									<span class="entryTypeRulesLimit__warning inline-block ml-2 warning hidden" style="margin-top: -3px; margin-left: 5px;">
+										<span class="icon" aria-hidden="true"></span>
+										<span class="visually-hidden">{{ "Warning"|t('entry-type-rules') }}: </span>
+									</span>
+								</td>
+								<td>
+									<div class="entryTypeRulesLimit__input">
+										{{ forms.textField({
+											id: (entryType.handle ~ '_limit'),
+											name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
+											type: 'number',
+											size: 5,
+											min: 0,
+											value: limitValue,
+											placeholder: '0',
+											unit: "Entries"|t('entry-type-rules'),
+										}) }}
+									</div>
+								</td>
+								<td>
+									{{ forms.checkboxSelectField({
+										id: (entryType.handle ~ '_userGroups'),
+										name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
+										options: groupOptions,
+										showAllOption: true,
+										allValue: '',
+										values: settings.sections[section.handle][entryType.handle].userGroups|default('')
+									}) }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
 
-    {% endfor %}
+		{% endfor %}
+	{% endif %}
 
 {% endblock %}
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Entry Type Rules plugin for Craft CMS 3.x
  *
@@ -38,4 +39,6 @@ return [
 	'Limit which user groups can add new entries for the entry type.' => 'Limit which user groups can add new entries for the entry type.',
 	'Admin users will always be able to add new entries.' => 'Admin users will always be able to add new entries.',
 	'Entries' => 'Entries',
+	'configureSections' => 'You need to <a href="{url}">configure some Sections</a> first.',
+	'configureEntries' => 'You need to create some <a href="{url}">entries</a> first.</p>',
 ];
