@@ -21,20 +21,18 @@ class SettingsController extends Controller
 {
 	protected array|int|bool $allowAnonymous = [];
 
-
 	public function actionIndex(): Response
 	{
-		$siteHandle = Craft::$app->request->getParam('site');
-        // Get the site to edit
-        $siteHandle = $siteHandle ?? Cp::requestedSite()->handle;
-        $siteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
+		$site = Cp::requestedSite();
+		$siteHandle = $site?->handle;
+		$siteId = $site?->id;
 
 		$variables = [];
 
 		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
 
 		$variables = [
-			'settings' => Plugin::$settings,
+			'settings' => Plugin::$plugin?->getSettings(),
 			'overrides' => ConfigHelper::localizedValue($overrides, $siteHandle),
 			'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $siteHandle)),
 			'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $siteHandle)),
@@ -49,7 +47,6 @@ class SettingsController extends Controller
 			$variables
 		);
 	}
-
 
 	/**
 	 * Handle a request going to our plugin's action URL for saving settings,
