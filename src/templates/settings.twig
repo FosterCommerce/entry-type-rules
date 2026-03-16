@@ -16,16 +16,12 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
+
+
 {% do view.registerAssetBundle("fostercommerce\\entrytyperules\\assetbundles\\entrytyperules\\EntryTypeRulesSettingsAsset") %}
 
 {% set title = "Entry Type Rules"|t('entry-type-rules') %}
 {% set fullPageForm = true %}
-{% set crumbs = [
-    {
-        label: 'Settings'|t('entry-type-rules'),
-        url: url('settings'),
-    }
-] %}
 
 {% set configOverride = overrides.sections is defined %}
 

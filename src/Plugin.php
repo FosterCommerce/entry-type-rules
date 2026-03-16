@@ -9,9 +9,11 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
+use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\helpers\ConfigHelper;
 use craft\web\Controller;
+use craft\web\UrlManager;
 use craft\web\View;
 use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
 use fostercommerce\entrytyperules\models\Settings;
@@ -26,7 +28,12 @@ use yii\base\InvalidConfigException;
  */
 class Plugin extends BasePlugin
 {
+
+    public static ?Plugin $plugin;
+
 	public bool $hasCpSettings = true;
+
+	public static ?Settings $settings = null;
 
 	/**
 	 * @throws InvalidConfigException
@@ -34,6 +41,11 @@ class Plugin extends BasePlugin
 	public function init(): void
 	{
 		parent::init();
+		self::$plugin = $this;
+
+		/** @var Settings $settings */
+        $settings = self::$plugin->getSettings();
+		self::$settings = $settings;
 
 		$this->setComponents([
 			'service' => Service::class,
@@ -62,25 +74,42 @@ class Plugin extends BasePlugin
 				}
 			}
 		);
+
+
+		Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function(RegisterUrlRulesEvent $event) {
+                // Register Control Panel routes
+                $event->rules = array_merge(
+                    $event->rules,
+					[
+                    	'entry-type-rules' => 'entry-type-rules/settings',
+						// 'entry-type-rules/<siteHandle>' => 'entry-type-rules/settings',
+					],
+                );
+            }
+        );
 	}
 
 	public function getSettingsResponse(): mixed
 	{
-		$site = Craft::$app->request->getParam('site');
+		// $site = Craft::$app->request->getParam('site');
 
-		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
+		// $overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
-		/** @var Controller $controller */
-		$controller = Craft::$app->controller;
-		return $controller->renderTemplate(
-			'entry-type-rules/settings',
-			[
-				'settings' => $this->getSettings(),
-				'overrides' => ConfigHelper::localizedValue($overrides, $site),
-				'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $site)),
-				'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $site)),
-			]
-		);
+		// /** @var Controller $controller */
+		// $controller = Craft::$app->controller;
+		// return $controller->renderTemplate(
+		// 	'entry-type-rules/settings',
+		// 	[
+		// 		'settings' => $this->getSettings(),
+		// 		'overrides' => ConfigHelper::localizedValue($overrides, $site),
+		// 		'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $site)),
+		// 		'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $site)),
+		// 	]
+		// );
+		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('entry-type-rules/settings'));
 	}
 
 	protected function createSettingsModel(): ?Model

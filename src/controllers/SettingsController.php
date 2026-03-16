@@ -5,6 +5,9 @@ namespace fostercommerce\entrytyperules\controllers;
 use Craft;
 
 use craft\errors\MissingComponentException;
+use craft\helpers\ConfigHelper;
+use craft\helpers\Cp;
+use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\Request;
 use fostercommerce\entrytyperules\models\Settings;
@@ -17,6 +20,36 @@ use yii\web\Response;
 class SettingsController extends Controller
 {
 	protected array|int|bool $allowAnonymous = [];
+
+
+	public function actionIndex(): Response
+	{
+		$siteHandle = Craft::$app->request->getParam('site');
+        // Get the site to edit
+        $siteHandle = $siteHandle ?? Cp::requestedSite()->handle;
+        $siteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
+
+		$variables = [];
+
+		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
+
+		$variables = [
+			'settings' => Plugin::$settings,
+			'overrides' => ConfigHelper::localizedValue($overrides, $siteHandle),
+			'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $siteHandle)),
+			'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $siteHandle)),
+			'siteHandle' => $siteHandle,
+			'siteId' => $siteId,
+		];
+
+		/** @var Controller $controller */
+		$controller = Craft::$app->controller;
+		return $controller->renderTemplate(
+			'entry-type-rules/settings',
+			$variables
+		);
+	}
+
 
 	/**
 	 * Handle a request going to our plugin's action URL for saving settings,
