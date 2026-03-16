@@ -10,6 +10,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
 use craft\helpers\UrlHelper;
+use craft\helpers\ConfigHelper;
 use craft\web\Controller;
 use craft\web\View;
 use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
@@ -65,6 +66,8 @@ class Plugin extends BasePlugin
 
 	public function getSettingsResponse(): mixed
 	{
+		$site = Craft::$app->request->getParam('site');
+
 		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
 
 		/** @var Controller $controller */
@@ -73,9 +76,9 @@ class Plugin extends BasePlugin
 			'entry-type-rules/settings',
 			[
 				'settings' => $this->getSettings(),
-				'overrides' => $overrides,
-				'sectionsUrl' => UrlHelper::cpUrl('settings/sections'),
-				'entriesUrl' => UrlHelper::cpUrl('entries'),
+				'overrides' => ConfigHelper::localizedValue($overrides, $site),
+				'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $site)),
+				'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $site)),
 			]
 		);
 	}

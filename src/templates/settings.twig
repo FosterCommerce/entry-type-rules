@@ -29,6 +29,9 @@
 
 {% set configOverride = overrides.sections is defined %}
 
+{# If we are using overrides from a config file then use those values otherwise use the settings #}
+{% set configSettings = configOverride ? overrides : settings %}
+
 {% set sections = craft.app.entries.getAllSections() %}
 
 {% set groupOptions = [] %}
@@ -104,7 +107,7 @@
 					<tbody>
 						{% for entryType in section.entryTypes %}
 							{% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
-							{% set limitValue = settings.sections[section.handle][entryType.handle].limit|default('') %}
+							{% set limitValue = configSettings.sections[section.handle][entryType.handle].limit|default('') %}
 							<tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
 								<td>
 									<strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
@@ -137,7 +140,7 @@
 										options: groupOptions,
 										showAllOption: true,
 										allValue: '',
-										values: settings.sections[section.handle][entryType.handle].userGroups|default('')
+										values: configSettings.sections[section.handle][entryType.handle].userGroups|default('')
 									}) }}
 								</td>
 							</tr>
