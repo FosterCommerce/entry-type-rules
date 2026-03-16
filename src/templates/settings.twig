@@ -65,6 +65,11 @@
 			value: 'entry-type-rules'})
 		}}
 
+		{{ forms.hidden({
+			name: 'siteId',
+			value: siteId
+		})}}
+
 		{% for section in sections | filter(section =>  section.type != 'single') %}
 
 			{% if not loop.first %}<hr />{% endif %}
