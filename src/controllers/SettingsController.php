@@ -5,13 +5,16 @@ namespace fostercommerce\entrytyperules\controllers;
 use Craft;
 
 use craft\errors\MissingComponentException;
+use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
 use craft\helpers\Cp;
 use craft\helpers\UrlHelper;
+use craft\models\Site;
 use craft\web\Controller;
 use craft\web\Request;
 use fostercommerce\entrytyperules\models\Settings;
 use fostercommerce\entrytyperules\Plugin;
+use Illuminate\Support\Collection;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use yii\web\MethodNotAllowedHttpException;
@@ -29,16 +32,23 @@ class SettingsController extends Controller
 
 		$variables = [];
 
+		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
+
 		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
 
 		$variables = [
 			'settings' => Plugin::$plugin?->getSettings(),
 			'overrides' => ConfigHelper::localizedValue($overrides, $siteHandle),
 			'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $siteHandle)),
-			'entriesUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('entries', $siteHandle)),
 			'siteHandle' => $siteHandle,
+			'siteHandleUri' => $siteHandleUri,
 			'siteId' => $siteId,
+			'crumbs' => $this->_buildCrumbs(),
 		];
+
+		$this->_buildCrumbs();
+
+
 
 		/** @var Controller $controller */
 		$controller = Craft::$app->controller;
@@ -78,5 +88,77 @@ class SettingsController extends Controller
 		}
 
 		return $this->redirectToPostedUrl();
+	}
+
+
+	/**
+	 * @return array<int, array<string, array<string, array<int, array<string, mixed>>|string>|string|null>>
+	 */
+	private function _buildCrumbs(): array
+	{
+		$sites = Craft::$app->getSites();
+		$requestedSite = Cp::requestedSite() ?? Craft::$app->getSites()->getPrimarySite();
+		$requestedSiteId = $requestedSite->id;
+		$requestedSiteName = $requestedSite->name;
+
+		$siteCrumbItems = [];
+		$siteGroups = Craft::$app->getSites()->getAllGroups();
+		$crumbSites = Collection::make($sites->getAllSites())
+			->map(fn (Site $site) => [
+				'site' => $site,
+			])
+			->keyBy(fn (array $site) => $site['site']->id)
+			->all();
+
+		foreach ($siteGroups as $siteGroup) {
+			$groupSites = $siteGroup->getSites();
+
+			if (empty($groupSites)) {
+				continue;
+			}
+
+			$groupSiteItems = array_map(fn (Site $site) => [
+				'status' => $crumbSites[$site->id]['site']->status ?? null,
+				'label' => Craft::t('site', $site->name),
+				'url' => UrlHelper::cpUrl("entry-type-rules?site={$site->handle}"),
+				'hidden' => ! isset($crumbSites[$site->id]),
+				'selected' => $site->id === $requestedSiteId,
+				'attributes' => [
+					'data' => [
+						'site-id' => $site->id,
+					],
+				],
+			], $groupSites);
+
+			if (count($siteGroups) > 1) {
+				$siteCrumbItems[] = [
+					'heading' => Craft::t('site', $siteGroup->name),
+					'items' => $groupSiteItems,
+					'hidden' => ! ArrayHelper::contains($groupSiteItems, fn (array $item) => ! $item['hidden']),
+				];
+			} else {
+				array_push($siteCrumbItems, ...$groupSiteItems);
+			}
+		}
+		// Add in the breadcrumbs
+		$crumbs = [
+			[
+				'id' => 'language-menu',
+				'icon' => 'world',
+				'label' => Craft::t(
+					'site',
+					$requestedSiteName
+				),
+				'menu' => [
+					'items' => $siteCrumbItems,
+					'label' => Craft::t('site', 'Select site'),
+				],
+			],
+			[
+				'label' => Plugin::$plugin?->getPluginName(),
+			],
+		];
+
+		return $crumbs;
 	}
 }

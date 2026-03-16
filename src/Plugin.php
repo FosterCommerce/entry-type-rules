@@ -95,6 +95,11 @@ class Plugin extends BasePlugin
 		return $response->redirect(UrlHelper::cpUrl('entry-type-rules/settings'));
 	}
 
+	public function getPluginName(): ?string
+	{
+		return $this->name;
+	}
+
 	protected function createSettingsModel(): ?Model
 	{
 		return new Settings();
