@@ -81,7 +81,7 @@ class Plugin extends BasePlugin
 					$event->rules,
 					[
 						'entry-type-rules' => 'entry-type-rules/settings',
-						// 'entry-type-rules/<siteHandle>' => 'entry-type-rules/settings',
+						'entry-type-rules/settings' => 'entry-type-rules/settings',
 					],
 				);
 			}

@@ -35,7 +35,6 @@ class SettingsController extends Controller
 		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
 
 		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
-
 		$variables = [
 			'settings' => Plugin::$plugin?->getSettings(),
 			'overrides' => ConfigHelper::localizedValue($overrides, $siteHandle),
@@ -70,9 +69,11 @@ class SettingsController extends Controller
 	public function actionSaveSettings(): Response
 	{
 		$this->requirePostRequest();
-
 		/** @var Request $request */
 		$request = Craft::$app->getRequest();
+
+		$siteHandle = Craft::$app->getSites()->getSiteById($request->getBodyParam('siteId'))->handle;
+
 
 		/** @var Plugin $plugin */
 		$plugin = Plugin::getInstance();

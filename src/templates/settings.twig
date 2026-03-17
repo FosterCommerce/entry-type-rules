@@ -16,6 +16,8 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
+{% set siteHandle = siteHandle ?? craft.app.getSites().getPrimarySite().handle %}
+{% set siteId = siteId ?? craft.app.getSites().getPrimarySite().id %}
 
 
 {% do view.registerAssetBundle("fostercommerce\\entrytyperules\\assetbundles\\entrytyperules\\EntryTypeRulesSettingsAsset") %}
@@ -26,7 +28,7 @@
 {% set configOverride = overrides.sections is defined %}
 
 {# If we are using overrides from a config file then use those values otherwise use the settings #}
-{% set configSettings = configOverride ? overrides : settings %}
+{% set configSettings = configOverride ? overrides : (settings ?? []) %}
 
 {% set sections = craft.app.entries.getAllSections() %}
 
@@ -108,7 +110,7 @@
 					<tbody>
 						{% for entryType in section.entryTypes %}
 							{% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
-							{% set limitValue = configSettings.sections[section.handle][entryType.handle].limit|default('') %}
+							{% set limitValue = configSettings.sections[siteHandle][section.handle][entryType.handle].limit|default('') %}
 							<tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
 								<td>
 									<strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
@@ -124,7 +126,7 @@
 									<div class="entryTypeRulesLimit__input">
 										{{ forms.textField({
 											id: (entryType.handle ~ '_limit'),
-											name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
+											name: (siteHandle ~ '[sections][' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
 											type: 'number',
 											size: 5,
 											min: 0,
@@ -137,11 +139,11 @@
 								<td>
 									{{ forms.checkboxSelectField({
 										id: (entryType.handle ~ '_userGroups'),
-										name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
+										name: (siteHandle ~ '[sections][' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
 										options: groupOptions,
 										showAllOption: true,
 										allValue: '',
-										values: configSettings.sections[section.handle][entryType.handle].userGroups|default('')
+										values: configSettings.sections[siteHandle][section.handle][entryType.handle].userGroups|default('')
 									}) }}
 								</td>
 							</tr>
