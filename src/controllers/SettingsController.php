@@ -78,9 +78,14 @@ class SettingsController extends Controller
 		/** @var Plugin $plugin */
 		$plugin = Plugin::getInstance();
 
+		/** @var Settings $oldSettings  */
+		$oldSettings = Plugin::$plugin->getSettings();
+
 		$settings = new Settings([
 			'sections' => $request->getBodyParam('sections'),
 		]);
+
+		$settings->sections = ArrayHelper::merge($oldSettings->sections ?? [], $settings->sections ?? []);
 
 		if (! $settings->validate() || ! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray())) {
 			Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));
