@@ -83,14 +83,15 @@ class SettingsController extends Controller
 		$newSettings = $request->getBodyParam('sections');
 
 		/** @var Settings $oldSettings  */
-		$oldSettings = $plugin->getSettings()->toArray();
+		$oldSettings = $plugin->getSettings();
 
-		$mergedSettings = ArrayHelper::merge($oldSettings['sections'] ?? [], $newSettings ?? []);
+		$mergedSettings = ArrayHelper::merge($oldSettings->toArray()['sections'] ?? [], $newSettings ?? []);
 
 
 		$settings = new Settings([
 			'sections' => $mergedSettings,
 		]);
+
 
 
 		if (! $settings->validate() || ! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray())) {
