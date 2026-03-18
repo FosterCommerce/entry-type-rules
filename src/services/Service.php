@@ -6,6 +6,8 @@ use Craft;
 
 use craft\base\Component;
 use craft\elements\Entry;
+use craft\helpers\ConfigHelper;
+use craft\helpers\Cp;
 use craft\web\User;
 use fostercommerce\entrytyperules\models\Settings;
 use fostercommerce\entrytyperules\Plugin;
@@ -20,6 +22,8 @@ class Service extends Component
 	{
 		// We will return an array of locked entry type IDs
 		$lockedEntryTypes = [];
+
+		$site = Cp::requestedSite();
 
 		// Get the plugins settings
 		/** @var Settings $settings */
@@ -51,24 +55,24 @@ class Service extends Component
 		// Loop through the locked entry type settings
 		foreach ($lockedTypesSettings as $typeHandle => $setting) {
 			// Get the count of each entry type and compare it to the limit value
-			$limit = $setting['limit'] ?? 0;
+			$limit = ConfigHelper::localizedValue($setting['limit'], $site->handle) ?? 0;
 			if ($limit > 0) {
 				$entryCount = Entry::find()->sectionId($sectionId)->type($typeHandle)->count();
-				if ($entryCount >= $setting['limit']) {
+				if ($entryCount >= $limit) {
 					$lockedEntryTypes[] = $entryTypesIdsMap[$typeHandle];
 				}
 			}
 
 			// Check the users groups against the userGroup setting
-			if (isset($setting['userGroups']) && is_array($setting['userGroups'])) {
-				$matchedGroups = array_intersect($setting['userGroups'], $userGroupArray);
+			$userGroups = ConfigHelper::localizedValue($setting['userGroups']);
+			if (is_array($userGroups)) {
+				$matchedGroups = array_intersect($userGroups, $userGroupArray);
 
 				if ($matchedGroups === [] && ! $user->getIsAdmin()) {
 					$lockedEntryTypes[] = $entryTypesIdsMap[$typeHandle];
 				}
 			}
 		}
-
 		return array_unique($lockedEntryTypes);
 	}
 }
