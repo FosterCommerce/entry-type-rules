@@ -104,6 +104,26 @@ class SettingsController extends Controller
 		return $this->redirectToPostedUrl();
 	}
 
+	public function _removeUserGroupsForSite(array &$array, string $targetSite, ?string $currentSite = null): void
+	{
+		foreach ($array as $key => &$value) {
+			// Track when we enter a site-specific branch
+			$nextSite = $currentSite;
+			if ($key === 'firstSite' || $key === 'secondSite') {
+				$nextSite = $key;
+			}
+
+			// Remove userGroups only if we're inside the target site
+			if ($key === 'userGroups' && $currentSite === $targetSite) {
+				unset($array[$key]);
+				continue;
+			}
+
+			if (is_array($value)) {
+				$this->_removeUserGroupsForSite($value, $targetSite, $nextSite);
+			}
+		}
+	}
 
 	/**
 	 * @return array<int, array<string, array<string, array<int, array<string, mixed>>|string>|string|null>>
@@ -174,26 +194,5 @@ class SettingsController extends Controller
 		];
 
 		return $crumbs;
-	}
-
-
-	function _removeUserGroupsForSite(array &$array, string $targetSite, ?string $currentSite = null): void {
-		foreach ($array as $key => &$value) {
-			// Track when we enter a site-specific branch
-			$nextSite = $currentSite;
-			if ($key === 'firstSite' || $key === 'secondSite') {
-				$nextSite = $key;
-			}
-
-			// Remove userGroups only if we're inside the target site
-			if ($key === 'userGroups' && $currentSite === $targetSite) {
-				unset($array[$key]);
-				continue;
-			}
-
-			if (is_array($value)) {
-				$this->_removeUserGroupsForSite($value, $targetSite, $nextSite);
-			}
-		}
 	}
 }
