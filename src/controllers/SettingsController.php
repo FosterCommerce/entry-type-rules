@@ -35,15 +35,18 @@ class SettingsController extends Controller
 		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
 
 		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
+		// dd(Plugin::$plugin?->getSettings());
+
 		$variables = [
-			'settings' => Plugin::$plugin?->getSettings(),
-			'overrides' => ConfigHelper::localizedValue($overrides, $siteHandle),
+			'settings' => Plugin::$plugin?->getSettings()->toArray(),
+			'overrides' => $overrides,
 			'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $siteHandle)),
 			'siteHandle' => $siteHandle,
 			'siteHandleUri' => $siteHandleUri,
 			'siteId' => $siteId,
 			'crumbs' => $this->_buildCrumbs(),
 		];
+
 
 		$this->_buildCrumbs();
 
@@ -74,18 +77,21 @@ class SettingsController extends Controller
 
 		$siteHandle = Craft::$app->getSites()->getSiteById($request->getBodyParam('siteId'))->handle;
 
-
 		/** @var Plugin $plugin */
 		$plugin = Plugin::getInstance();
 
+		$newSettings = $request->getBodyParam('sections');
+
 		/** @var Settings $oldSettings  */
-		$oldSettings = Plugin::$plugin->getSettings();
+		$oldSettings = $plugin->getSettings()->toArray();
+
+		$mergedSettings = ArrayHelper::merge($oldSettings['sections'] ?? [], $newSettings ?? []);
+
 
 		$settings = new Settings([
-			'sections' => $request->getBodyParam('sections'),
+			'sections' => $mergedSettings,
 		]);
 
-		$settings->sections = ArrayHelper::merge($oldSettings->sections ?? [], $settings->sections ?? []);
 
 		if (! $settings->validate() || ! Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray())) {
 			Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t save plugin settings.'));

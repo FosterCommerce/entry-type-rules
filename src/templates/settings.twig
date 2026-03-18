@@ -41,7 +41,6 @@
 {% endfor %}
 
 {% block content %}
-{{ dump(settings.sections)}}
 	{% if sections is empty %}
 		<div class="zilch">
 			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : sectionsUrl })|raw }}</p>
@@ -111,7 +110,7 @@
 					<tbody>
 						{% for entryType in section.entryTypes %}
 							{% set entryTypeCount = craft.entries.section(section.handle).type(entryType.handle).count %}
-							{% set limitValue = configSettings.sections[siteHandle][section.handle][entryType.handle].limit|default('') %}
+							{% set limitValue = configSettings.sections[section.handle][entryType.handle].limit[siteHandle]|default('') %}
 							<tr class="entryTypeRulesLimit" data-count="{{ entryTypeCount }}">
 								<td>
 									<strong>{{ entryType.name }}</strong> <i>{{ entryType.handle }}</i><br/>
@@ -127,7 +126,7 @@
 									<div class="entryTypeRulesLimit__input">
 										{{ forms.textField({
 											id: (entryType.handle ~ '_limit'),
-											name: ('sections[' ~ siteHandle ~ '][' ~ section.handle ~ ']['~ entryType.handle ~ '][limit]'),
+											name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][limit][' ~ siteHandle ~ ']'),
 											type: 'number',
 											size: 5,
 											min: 0,
@@ -140,11 +139,11 @@
 								<td>
 									{{ forms.checkboxSelectField({
 										id: (entryType.handle ~ '_userGroups'),
-										name: ('sections[' ~ siteHandle ~ '][' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups]'),
+										name: ('sections[' ~ section.handle ~ ']['~ entryType.handle ~ '][userGroups][' ~ siteHandle ~']'),
 										options: groupOptions,
 										showAllOption: true,
 										allValue: '',
-										values: configSettings.sections[siteHandle][section.handle][entryType.handle].userGroups|default('')
+										values: configSettings.sections[section.handle][entryType.handle].userGroups[siteHandle]|default('')
 									}) }}
 								</td>
 							</tr>
