@@ -39,7 +39,6 @@
 {% endfor %}
 
 {% block content %}
-{{ dump(sections)}}
 	{% if sections is empty %}
 		<div class="zilch">
 			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : sectionsUrl })|raw }}</p>
