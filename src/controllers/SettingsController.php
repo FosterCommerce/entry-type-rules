@@ -35,7 +35,11 @@ class SettingsController extends Controller
 		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
 
 		$overrides = Craft::$app->getConfig()->getConfigFromFile('entry-type-rules');
-		// dd(Plugin::$plugin?->getSettings());
+
+		// walk through overrides array,
+		// if the value set for 'limit' is not an array then replace it with an array of siteHandles all with same value
+		// if the value set for limit is an array and there is a key for '*' then replace it with an array of siteHandles all with same value
+		$this->_globalValues($overrides);
 
 		$variables = [
 			'settings' => Plugin::$plugin?->getSettings()->toArray(),
@@ -86,6 +90,7 @@ class SettingsController extends Controller
 
 		$this->_removeUserGroupsForSite($oldSettings, $siteHandle);
 
+
 		$mergedSettings = ArrayHelper::merge($oldSettings['sections'] ?? [], $newSettings ?? []);
 
 
@@ -104,26 +109,6 @@ class SettingsController extends Controller
 		return $this->redirectToPostedUrl();
 	}
 
-	public function _removeUserGroupsForSite(array &$array, string $targetSite, ?string $currentSite = null): void
-	{
-		foreach ($array as $key => &$value) {
-			// Track when we enter a site-specific branch
-			$nextSite = $currentSite;
-			if ($key === 'firstSite' || $key === 'secondSite') {
-				$nextSite = $key;
-			}
-
-			// Remove userGroups only if we're inside the target site
-			if ($key === 'userGroups' && $currentSite === $targetSite) {
-				unset($array[$key]);
-				continue;
-			}
-
-			if (is_array($value)) {
-				$this->_removeUserGroupsForSite($value, $targetSite, $nextSite);
-			}
-		}
-	}
 
 	/**
 	 * @return array<int, array<string, array<string, array<int, array<string, mixed>>|string>|string|null>>
@@ -194,5 +179,63 @@ class SettingsController extends Controller
 		];
 
 		return $crumbs;
+	}
+
+
+	function _removeUserGroupsForSite(array &$array, string $targetSite, ?string $currentSite = null): void
+	{
+		foreach ($array as $key => &$value) {
+			// Track when we enter a site-specific branch
+			$nextSite = $currentSite;
+			if ($key === 'firstSite' || $key === 'secondSite') {
+				$nextSite = $key;
+			}
+
+			// Remove userGroups only if we're inside the target site
+			if ($key === 'userGroups' && $currentSite === $targetSite) {
+				unset($array[$key]);
+				continue;
+			}
+
+			if (is_array($value)) {
+				$this->_removeUserGroupsForSite($value, $targetSite, $nextSite);
+			}
+		}
+	}
+
+
+	private function _globalValues(array &$array): void
+	{
+		// get all sitehandles
+		$sites = Craft::$app->getSites()->getAllSites();
+		$siteHandles = array_map(function($site) {
+			return $site->handle;
+		}, $sites);
+
+		foreach ($array as $key => &$value) {
+			// if we only have an integer as a limit value, then set the value to be an array of site handles set to the value
+			if ($key === 'limit' && !is_array($value)) {
+				$limitValue = $value;
+				$value = array_fill_keys($siteHandles, $limitValue);
+			}
+
+			// if we have an array of limit values, but the array contains the key '*'
+			// then set any undefined sites to use the value for '*'
+			if ($key === 'limit' and is_array($value)) {
+				if(array_key_exists('*', $value)){
+					$limitValue = $value['*'];
+					$missingSiteHandles = array_values(array_diff($siteHandles, array_keys($value)));
+					$defaultedSiteHandles = array_fill_keys($missingSiteHandles, $limitValue);
+					$value = array_merge($value, $defaultedSiteHandles);
+					// unset the '*'
+					unset($value['*']);
+				}
+			}
+
+
+			if (is_array($value)) {
+				$this->_globalValues($value);
+			}
+		}
 	}
 }
