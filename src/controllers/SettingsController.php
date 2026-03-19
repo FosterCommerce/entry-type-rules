@@ -237,6 +237,8 @@ class SettingsController extends Controller
 				}
 			}
 
+			//TODO global settings for usergroups
+
 
 			if (is_array($value)) {
 				$this->_globalValues($value);
