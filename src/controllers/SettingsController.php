@@ -29,7 +29,11 @@ class SettingsController extends Controller
 		$site = Cp::requestedSite();
 		$siteHandle = $site?->handle;
 		$siteId = $site?->id;
+		$sections = Craft::$app->getEntries()->getAllSections();
 
+		$enabledSections = array_filter($sections, function($section) use ($siteId) {
+			return $section->getSiteSettings()[$siteId]->enabledByDefault ?? false;
+		});
 		$variables = [];
 
 		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
@@ -42,6 +46,7 @@ class SettingsController extends Controller
 		$this->_globalValues($overrides);
 
 		$variables = [
+			'sections' => $enabledSections,
 			'settings' => Plugin::$plugin?->getSettings()->toArray(),
 			'overrides' => $overrides,
 			'sectionsUrl' => ConfigHelper::localizedValue(UrlHelper::cpUrl('settings/sections', $siteHandle)),

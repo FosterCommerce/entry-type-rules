@@ -30,8 +30,6 @@
 {# If we are using overrides from a config file then use those values otherwise use the settings #}
 {% set configSettings = configOverride ? overrides : (settings ?? []) %}
 
-{% set sections = craft.app.entries.getAllSections() %}
-
 {% set groupOptions = [] %}
 {% for group in craft.app.userGroups.allGroups %}
     {% set groupOptions = groupOptions|merge([{
@@ -41,6 +39,7 @@
 {% endfor %}
 
 {% block content %}
+{{ dump(sections)}}
 	{% if sections is empty %}
 		<div class="zilch">
 			<p>{{ 'configureSections'|t('entry-type-rules', {'url' : sectionsUrl })|raw }}</p>
@@ -73,7 +72,6 @@
 		})}}
 
 		{% for section in sections | filter(section =>  section.type != 'single') %}
-
 			{% if not loop.first %}<hr />{% endif %}
 
 			<section>
