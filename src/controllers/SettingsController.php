@@ -225,20 +225,18 @@ class SettingsController extends Controller
 			}
 
 			// if we have an array of limit values, but the array contains the key '*'
+			// or there is a '*' array in the userGroups
 			// then set any undefined sites to use the value for '*'
-			if ($key === 'limit' and is_array($value)) {
+			if (($key === 'limit' and is_array($value)) || $key === 'userGroups') {
 				if(array_key_exists('*', $value)){
-					$limitValue = $value['*'];
+					$defaultValue = $value['*'];
 					$missingSiteHandles = array_values(array_diff($siteHandles, array_keys($value)));
-					$defaultedSiteHandles = array_fill_keys($missingSiteHandles, $limitValue);
+					$defaultedSiteHandles = array_fill_keys($missingSiteHandles, $defaultValue);
 					$value = array_merge($value, $defaultedSiteHandles);
 					// unset the '*'
 					unset($value['*']);
 				}
 			}
-
-			//TODO global settings for usergroups
-
 
 			if (is_array($value)) {
 				$this->_globalValues($value);
