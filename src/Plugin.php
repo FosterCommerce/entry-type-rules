@@ -9,8 +9,9 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
+use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
-use craft\web\Controller;
+use craft\web\UrlManager;
 use craft\web\View;
 use fostercommerce\entrytyperules\assetbundles\entrytyperules\EntryTypeRulesAsset;
 use fostercommerce\entrytyperules\models\Settings;
@@ -25,7 +26,11 @@ use yii\base\InvalidConfigException;
  */
 class Plugin extends BasePlugin
 {
+	public static ?Plugin $plugin = null;
+
 	public bool $hasCpSettings = true;
+
+	public static ?Settings $settings = null;
 
 	/**
 	 * @throws InvalidConfigException
@@ -33,6 +38,10 @@ class Plugin extends BasePlugin
 	public function init(): void
 	{
 		parent::init();
+		self::$plugin = $this;
+
+		self::$plugin->getSettings();
+		//self::$settings = $settings;
 
 		$this->setComponents([
 			'service' => Service::class,
@@ -61,23 +70,34 @@ class Plugin extends BasePlugin
 				}
 			}
 		);
+
+
+		Event::on(
+			UrlManager::class,
+			UrlManager::EVENT_REGISTER_CP_URL_RULES,
+			function (RegisterUrlRulesEvent $event): void {
+				// Register Control Panel routes
+				$event->rules = array_merge(
+					$event->rules,
+					[
+						'entry-type-rules' => 'entry-type-rules/settings',
+						'entry-type-rules/settings' => 'entry-type-rules/settings',
+					],
+				);
+			}
+		);
 	}
 
 	public function getSettingsResponse(): mixed
 	{
-		$overrides = Craft::$app->getConfig()->getConfigFromFile($this->handle);
+		/** @var \craft\web\Response $response */
+		$response = Craft::$app->getResponse();
+		return $response->redirect(UrlHelper::cpUrl('entry-type-rules/settings'));
+	}
 
-		/** @var Controller $controller */
-		$controller = Craft::$app->controller;
-		return $controller->renderTemplate(
-			'entry-type-rules/settings',
-			[
-				'settings' => $this->getSettings(),
-				'overrides' => $overrides,
-				'sectionsUrl' => UrlHelper::cpUrl('settings/sections'),
-				'entriesUrl' => UrlHelper::cpUrl('entries'),
-			]
-		);
+	public function getPluginName(): ?string
+	{
+		return $this->name;
 	}
 
 	protected function createSettingsModel(): ?Model
