@@ -31,9 +31,7 @@ class SettingsController extends Controller
 		$siteId = $site?->id;
 		$sections = Craft::$app->getEntries()->getAllSections();
 
-		$enabledSections = array_filter($sections, function ($section) use ($siteId) {
-			return $section->getSiteSettings()[$siteId]->enabledByDefault ?? false;
-		});
+		$enabledSections = array_filter($sections, fn($section) => $section->getSiteSettings()[$siteId]->enabledByDefault ?? false);
 		$variables = [];
 
 		$siteHandleUri = Craft::$app->isMultiSite ? '/' . $siteHandle : '';
@@ -148,10 +146,10 @@ class SettingsController extends Controller
 		$siteCrumbItems = [];
 		$siteGroups = Craft::$app->getSites()->getAllGroups();
 		$crumbSites = Collection::make($sites->getAllSites())
-			->map(fn (Site $site) => [
+			->map(fn (Site $site): array => [
 				'site' => $site,
 			])
-			->keyBy(fn (array $site) => $site['site']->id)
+			->keyBy(fn (array $site): ?int => $site['site']->id)
 			->all();
 
 		foreach ($siteGroups as $siteGroup) {
@@ -161,7 +159,7 @@ class SettingsController extends Controller
 				continue;
 			}
 
-			$groupSiteItems = array_map(fn (Site $site) => [
+			$groupSiteItems = array_map(fn (Site $site): array => [
 				'status' => $crumbSites[$site->id]['site']->status ?? null,
 				'label' => Craft::t('site', $site->name),
 				'url' => UrlHelper::cpUrl("entry-type-rules?site={$site->handle}"),
@@ -178,12 +176,13 @@ class SettingsController extends Controller
 				$siteCrumbItems[] = [
 					'heading' => Craft::t('site', $siteGroup->name),
 					'items' => $groupSiteItems,
-					'hidden' => ! ArrayHelper::contains($groupSiteItems, fn (array $item) => ! $item['hidden']),
+					'hidden' => ! ArrayHelper::contains($groupSiteItems, fn (array $item): bool => ! $item['hidden']),
 				];
 			} else {
 				array_push($siteCrumbItems, ...$groupSiteItems);
 			}
 		}
+
 		// Add in the breadcrumbs
 		$crumbs = [
 			[
@@ -210,9 +209,7 @@ class SettingsController extends Controller
 	{
 		// get all sitehandles
 		$sites = Craft::$app->getSites()->getAllSites();
-		$siteHandles = array_map(function ($site) {
-			return $site->handle;
-		}, $sites);
+		$siteHandles = array_map(fn($site) => $site->handle, $sites);
 
 		foreach ($array as $key => &$value) {
 			// if we only have an integer as a limit value, then set the value to be an array of site handles set to the value
@@ -224,16 +221,14 @@ class SettingsController extends Controller
 			// if we have an array of limit values, but the array contains the key '*'
 			// or there is a '*' array in the userGroups
 			// then set any undefined sites to use the value for '*'
-			if (($key === 'limit' and is_array($value)) || $key === 'userGroups') {
-				if (array_key_exists('*', $value)) {
-					$defaultValue = $value['*'];
-					$missingSiteHandles = array_values(array_diff($siteHandles, array_keys($value)));
-					$defaultedSiteHandles = array_fill_keys($missingSiteHandles, $defaultValue);
-					$value = array_merge($value, $defaultedSiteHandles);
-					// unset the '*'
-					unset($value['*']);
-				}
-			}
+			if (($key === 'limit' && is_array($value) || $key === 'userGroups') && array_key_exists('*', $value)) {
+       $defaultValue = $value['*'];
+       $missingSiteHandles = array_values(array_diff($siteHandles, array_keys($value)));
+       $defaultedSiteHandles = array_fill_keys($missingSiteHandles, $defaultValue);
+       $value = array_merge($value, $defaultedSiteHandles);
+       // unset the '*'
+       unset($value['*']);
+   }
 
 			if (is_array($value)) {
 				$this->_globalValues($value);

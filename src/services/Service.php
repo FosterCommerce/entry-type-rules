@@ -73,6 +73,7 @@ class Service extends Component
 				}
 			}
 		}
+
 		return array_unique($lockedEntryTypes);
 	}
 }
